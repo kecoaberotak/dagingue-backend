@@ -5,8 +5,8 @@ const port = 4000;
 
 app.use(express.json());
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Hello REST API');
+app.get('/health', (req: Request, res: Response) => {
+  res.status(200).send({ status: true, statusCode: 200, message: 'Server is running' });
 });
 
 app.listen(port, () => {
