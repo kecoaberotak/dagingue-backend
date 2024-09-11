@@ -1,4 +1,5 @@
 import express, { Application, Request, Response } from 'express';
+import { logger } from './utils/logger';
 
 const app: Application = express();
 const port = 4000;
@@ -10,5 +11,5 @@ app.get('/health', (req: Request, res: Response) => {
 });
 
 app.listen(port, () => {
-  console.log('Server is running on port:' + port);
+  logger.info(`[server]: Server is running at port: ${port}`);
 });
