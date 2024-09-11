@@ -1,8 +1,9 @@
 import express, { Application, Request, Response } from 'express';
 import { logger } from './utils/logger';
+import CONFIG from './config/environtment';
 
 const app: Application = express();
-const port = 4000;
+const port = CONFIG.port;
 
 app.use(express.json());
 
