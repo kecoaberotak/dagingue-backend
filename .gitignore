@@ -48,3 +48,6 @@ eslint.config.mjs
 
 # Typescript cache and output files
 *.tsbuildinfo
+
+# Firebase Admin SDK Private Key
+dagingue-dc5c9-firebase-adminsdk-6g8zo-4eb1a9ba3a.json
