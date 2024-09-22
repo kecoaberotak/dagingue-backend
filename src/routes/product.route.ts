@@ -1,11 +1,10 @@
 import { Router } from 'express';
 import { logger } from '../utils/logger';
+import { getPotong } from '../controllers/potong.controller';
 
 export const ProductRoute: Router = Router();
 
-ProductRoute.get('/potong', (req, res) => {
-  res.status(200).send({ message: 'Product Potong' });
-});
+ProductRoute.get('/potong', getPotong);
 
 ProductRoute.get('/bumbu', (req, res) => {
   logger.info('Route check success');
