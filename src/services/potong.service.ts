@@ -23,8 +23,28 @@ export const getAllPotong = async () => {
 
     return data;
   } catch (error) {
-    logger.info('Cannot get data potong from database');
-    logger.error(error);
+    logger.info('Error getting data potong');
+    logger.error('Error getting data potong:', error);
+    return null;
+  }
+};
+
+export const getDetailPotong = async (id: string) => {
+  try {
+    const snapshot = await db.collection('potongs').doc(id).get();
+
+    if (!snapshot.exists) {
+      logger.info('No match document');
+      return null;
+    }
+
+    return {
+      id: snapshot.id,
+      ...snapshot.data(),
+    };
+  } catch (error) {
+    logger.info('Error getting data potong');
+    logger.error('Error getting data potong:', error);
     return null;
   }
 };
