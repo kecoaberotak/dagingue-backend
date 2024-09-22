@@ -22,3 +22,5 @@ export const getPotong = async (req: Request, res: Response) => {
     return res.status(500).send({ status: false, statusCode: 500, message: 'Internal Server Error' });
   }
 };
+
+export const addPotong = async () => {};
