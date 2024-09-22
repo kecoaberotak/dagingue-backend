@@ -1,15 +1,24 @@
 import { Request, Response } from 'express';
 import { logger } from '../utils/logger';
-import { getAllPotong } from '../services/potong.service';
+import { getAllPotong, getDetailPotong } from '../services/potong.service';
 
 export const getPotong = async (req: Request, res: Response) => {
-  const dataPotong = await getAllPotong();
+  const {
+    params: { id },
+  } = req;
 
-  if (dataPotong) {
-    logger.info('Success get data potong');
-    return res.status(200).send({ status: true, statusCode: 200, data: dataPotong });
-  } else {
-    logger.info('Data not found');
-    return res.status(404).send({ status: false, statusCode: 404, data: [] });
+  try {
+    const data = id ? await getDetailPotong(id) : await getAllPotong();
+
+    if (data) {
+      logger.info(`Success get data ${id ? 'detail ' : ''}potong`);
+      return res.status(200).send({ status: true, statusCode: 200, data });
+    } else {
+      logger.info('Data not found');
+      return res.status(404).send({ status: false, statusCode: 404, message: 'Data not found' });
+    }
+  } catch (error) {
+    logger.error('Error fetching data potong', error);
+    return res.status(500).send({ status: false, statusCode: 500, message: 'Internal Server Error' });
   }
 };
