@@ -5,6 +5,7 @@ import { getPotong } from '../controllers/potong.controller';
 export const ProductRoute: Router = Router();
 
 ProductRoute.get('/potong', getPotong);
+ProductRoute.get('/potong/:id', getPotong);
 
 ProductRoute.get('/bumbu', (req, res) => {
   logger.info('Route check success');
