@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { logger } from '../utils/logger';
-import { getAllPotong, getDetailPotong } from '../services/potong.service';
+import { getAllDataPotong, getDataPotongById } from '../services/potong.service';
 
 export const getPotong = async (req: Request, res: Response) => {
   const {
@@ -8,7 +8,7 @@ export const getPotong = async (req: Request, res: Response) => {
   } = req;
 
   try {
-    const data = id ? await getDetailPotong(id) : await getAllPotong();
+    const data = id ? await getDataPotongById(id) : await getAllDataPotong();
 
     if (data) {
       logger.info(`Success get data ${id ? 'detail ' : ''}potong`);

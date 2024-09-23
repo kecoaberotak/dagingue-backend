@@ -1,10 +1,11 @@
+import { Request } from 'express';
 import { firebase } from '../lib/firebase/init';
 import { Firestore } from 'firebase-admin/firestore';
 import { logger } from '../utils/logger';
 
 const db: Firestore = firebase.firestore();
 
-export const getAllPotong = async () => {
+export const getAllDataPotong = async () => {
   try {
     // ambil semua data
     const snapshot = await db.collection('potongs').get();
@@ -29,7 +30,7 @@ export const getAllPotong = async () => {
   }
 };
 
-export const getDetailPotong = async (id: string) => {
+export const getDataPotongById = async (id: string) => {
   try {
     const snapshot = await db.collection('potongs').doc(id).get();
 
@@ -48,3 +49,5 @@ export const getDetailPotong = async (id: string) => {
     return null;
   }
 };
+
+export const addDataPotong = async (req: Request) => {};
