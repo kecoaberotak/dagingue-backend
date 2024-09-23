@@ -1,9 +1,17 @@
 import admin from 'firebase-admin';
-
 const serviceAccount = require('./dagingue-dc5c9-firebase-adminsdk-6g8zo-4eb1a9ba3a.json');
+import CONFIG from '../../config/environtment';
 
-const config = {
-  credential: admin.credential.cert(serviceAccount),
-};
+// Inisialisasi Firebase App
+const firebase = admin.apps.length
+  ? admin.app()
+  : admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
+      storageBucket: CONFIG.storageBucket,
+    });
 
-export const firebase = admin.apps.length ? admin.app() : admin.initializeApp(config);
+// Inisialisasi Firestore dan Storage
+const db = admin.firestore();
+const storage = admin.storage(); // Mengakses storage
+
+export { firebase, db, storage };
