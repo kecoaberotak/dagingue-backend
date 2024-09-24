@@ -1,9 +1,6 @@
-import { Request } from 'express';
-import { firebase } from '../lib/firebase/init';
-import { Firestore } from 'firebase-admin/firestore';
+import { db } from '../lib/firebase/init';
 import { logger } from '../utils/logger';
-
-const db: Firestore = firebase.firestore();
+import { uploadImageToStorage } from '../utils/uploadImageToStorage';
 
 export const getAllDataPotong = async () => {
   try {
@@ -50,4 +47,46 @@ export const getDataPotongById = async (id: string) => {
   }
 };
 
-export const addDataPotong = async (req: Request) => {};
+export const addDataPotong = async (formData: any) => {
+  const { name, desc, price, image } = formData;
+
+  try {
+    // check semua field sudah terisi
+    if (!name || !desc || !price || !image) {
+      logger.info('Data potong tidak lengkap');
+      return null;
+    }
+
+    // validasi tipe file
+    const fileType = ['image/jpeg', 'image/jpg', 'image/png'];
+    if (!fileType.includes(image.mimetype)) {
+      logger.info('Format file tidak valid');
+      return null;
+    }
+
+    // Upload gambar ke Cloud Storage
+    const imageUrl = await uploadImageToStorage(image);
+
+    if (!imageUrl) {
+      logger.info('Failed upload image to storage');
+      return null;
+    }
+
+    // Simpan data ke Firestore
+    const newData = {
+      name,
+      desc,
+      price: parseFloat(price), // Konversi harga menjadi angka jika dikirim dalam string
+      image: imageUrl, // URL gambar dari Cloud Storage
+      createdAt: new Date(), // Tambahkan timestamp
+    };
+
+    // Simpan ke dalam koleksi 'potongs'
+    const potongRef = await db.collection('potongs').add(newData);
+    logger.info(`Berhasil menambahkan data potong dengan ID`);
+    return { id: potongRef.id, ...newData };
+  } catch (error) {
+    logger.error('Gagal menambahkan data potong', error);
+    return null;
+  }
+};
