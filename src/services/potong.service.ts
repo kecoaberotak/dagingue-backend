@@ -47,23 +47,10 @@ export const getDataPotongById = async (id: string) => {
   }
 };
 
-export const addDataPotong = async (formData: any) => {
-  const { name, desc, price, image } = formData;
+export const addDataPotong = async (payload: any) => {
+  const { name, desc, price, image } = payload;
 
   try {
-    // check semua field sudah terisi
-    if (!name || !desc || !price || !image) {
-      logger.info('Data potong tidak lengkap');
-      return null;
-    }
-
-    // validasi tipe file
-    const fileType = ['image/jpeg', 'image/jpg', 'image/png'];
-    if (!fileType.includes(image.mimetype)) {
-      logger.info('Format file tidak valid');
-      return null;
-    }
-
     // Upload gambar ke Cloud Storage
     const imageUrl = await uploadImageToStorage(image);
 
@@ -83,10 +70,9 @@ export const addDataPotong = async (formData: any) => {
 
     // Simpan ke dalam koleksi 'potongs'
     const potongRef = await db.collection('potongs').add(newData);
-    logger.info(`Berhasil menambahkan data potong dengan ID`);
     return { id: potongRef.id, ...newData };
   } catch (error) {
-    logger.error('Gagal menambahkan data potong', error);
+    logger.error(`Err: potong - add to database = ${error}`);
     return null;
   }
 };
