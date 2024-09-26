@@ -1,6 +1,11 @@
-export default interface PotongType {
+export interface PotongType {
   name: string;
   desc: string;
   price: number;
-  image: File | string;
+  image: Express.Multer.File | string;
+}
+export interface UploadPotongResult {
+  success: boolean;
+  message: string;
+  data?: { id: string; [key: string]: any } | Array<{ id: string; [key: string]: any }>;
 }
