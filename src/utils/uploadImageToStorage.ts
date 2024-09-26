@@ -1,17 +1,28 @@
 import { v4 as uuidv4 } from 'uuid';
 import { storage } from '../lib/firebase/init';
 import { logger } from './logger';
+import UploadImageResult from '../types/utils.type';
 
-export const uploadImageToStorage = async (file: Express.Multer.File): Promise<string | null> => {
+export const uploadImageToStorage = async (file: Express.Multer.File): Promise<UploadImageResult> => {
+  const fileType = ['image/jpeg', 'image/jpg', 'image/png'];
+
+  // validasi tipe file
+  if (!fileType.includes(file.mimetype)) {
+    logger.info('Format file tidak valid');
+    return { success: false, message: 'Format file tidak valid' };
+  }
+
   try {
     // Generate Unique file name
-    const filename = `${uuidv4()}.jpg`;
+    const fileExtension = file.mimetype.split('/')[1];
+    const filename = `${uuidv4()}.${fileExtension}`;
     const bucket = storage.bucket();
     const fileRef = bucket.file(`potong_image/${filename}`);
 
     // Upload file ke Cloud Storage
     await fileRef.save(file.buffer, {
       contentType: file.mimetype,
+      // meningkatkan performa, gambar akan ada di cache browser selama setahun
       metadata: { cacheControl: 'public, max-age=31536000' },
     });
 
@@ -20,9 +31,14 @@ export const uploadImageToStorage = async (file: Express.Multer.File): Promise<s
 
     // Dapatkan URL public
     const publicUrl = `https://storage.googleapis.com/${bucket.name}/${fileRef.name}`;
-    return publicUrl;
+    return { success: true, message: 'Success upload file to Storage', imageLink: publicUrl };
   } catch (error) {
-    logger.error('Error uploading image to storage', error);
-    return null; // Return null jika ada error
+    if (error instanceof Error) {
+      logger.error(`Err: potong - upload image to storage = ${error.message}`);
+      return { success: false, message: error.message };
+    } else {
+      logger.error('Err: potong - upload image to storage = Unknown error');
+      return { success: false, message: 'Unknown error occurred' };
+    }
   }
 };
