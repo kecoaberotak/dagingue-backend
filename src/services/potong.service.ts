@@ -117,3 +117,43 @@ export const deleteDataPotongById = async (id: string): Promise<ProductResultTyp
     return { success: false, message: 'Unknown error occurred during deletion' };
   }
 };
+
+export const editDataPotongById = async (id: string, payload: ProductType) => {
+  try {
+    const potongRef = db.collection('potongs').doc(id);
+    const snapshot = await potongRef.get();
+
+    if (!snapshot.exists) {
+      return { success: false, message: 'No potong data found for ID: ' + id };
+    }
+
+    // Cek apakah image adalah file baru atau link yang ada
+    let updatedImageLink: string | undefined = payload.image as string; // Jika image adalah string (link)
+
+    if (payload.image && typeof payload.image !== 'string') {
+      // Jika image adalah file, upload ke Firebase Storage
+      updatedImageLink = await uploadImageToStorage(payload.image as Express.Multer.File, 'potong_image');
+    }
+
+    const updatedData = {
+      ...snapshot.data(),
+      ...payload, // merge payload dengan data lama
+      image: updatedImageLink || snapshot.data()?.image, // Simpan link image baru atau gunakan link yang lama
+      updatedAt: new Date(),
+    };
+
+    // Perbarui dokumen di Firestore
+    await potongRef.update(updatedData);
+
+    return {
+      success: true,
+      message: 'Success update potong data for ID: ' + id,
+      data: { id: snapshot.id, ...updatedData },
+    };
+  } catch (error) {
+    if (error instanceof Error) {
+      return { success: false, message: error.message };
+    }
+    return { success: false, message: 'Unknown error occurred during update' };
+  }
+};
