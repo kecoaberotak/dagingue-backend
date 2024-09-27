@@ -25,3 +25,32 @@ export const createProductValidation = (payload: ProductType) => {
 
   return schema.validate(payload);
 };
+
+export const upadateProductValidation = (payload: ProductType) => {
+  const schema = Joi.object({
+    name: Joi.string().optional().messages({
+      'string.base': 'Nama tidak valid',
+    }),
+    desc: Joi.string().optional().messages({
+      'string.base': 'Deskripsi  tidak valid',
+    }),
+    price: Joi.number().optional().messages({
+      'number.base': 'Harga tidak valid',
+    }),
+    image: Joi.alternatives()
+      .try(
+        Joi.string().uri().optional(), // Untuk link gambar yang sudah ada
+        Joi.object({
+          mimetype: Joi.string().valid('image/jpeg', 'image/png', 'image/gif').required().messages({
+            'any.only': 'File harus berupa gambar dengan format jpeg, png, atau gif',
+          }),
+        })
+          .unknown(true)
+          .optional()
+          .messages({ 'object.base': 'File image tidak valid' }),
+      )
+      .optional(), // Seluruh image bisa opsional,
+  });
+
+  return schema.validate(payload);
+};
