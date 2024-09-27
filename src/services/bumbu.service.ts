@@ -23,3 +23,21 @@ export const getAllDataBumbu = async (): Promise<ProductResultType> => {
     throw error;
   }
 };
+
+export const getDataBumbuById = async (id: string): Promise<ProductResultType> => {
+  try {
+    const snapshot = await db.collection('bumbus').doc(id).get();
+
+    if (!snapshot.exists) {
+      return { success: false, message: 'No data potong found for ID: ' + id };
+    }
+
+    return {
+      success: true,
+      message: 'Success get data potong for ID: ' + id,
+      data: { id: snapshot.id, ...snapshot.data() },
+    };
+  } catch (error) {
+    throw error;
+  }
+};
