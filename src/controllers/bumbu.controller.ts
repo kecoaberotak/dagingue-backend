@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { logError, logInfo } from '../utils/logger';
-import { getAllDataBumbu } from '../services/bumbu.service';
+import { getAllDataBumbu, getDataBumbuById } from '../services/bumbu.service';
 import { ResponseDataType } from '../types/product.type';
 
 export const getBumbu = async (req: Request, res: Response) => {
@@ -9,7 +9,7 @@ export const getBumbu = async (req: Request, res: Response) => {
   } = req;
 
   try {
-    const result = await getAllDataBumbu();
+    const result = id ? await getDataBumbuById(id) : await getAllDataBumbu();
 
     if (result.success) {
       logInfo(result.message);
