@@ -24,11 +24,7 @@ export const getAllDataPotong = async (): Promise<ProductResultType> => {
       data: data,
     };
   } catch (error) {
-    if (error instanceof Error) {
-      return { success: false, message: error.message };
-    } else {
-      return { success: false, message: 'Unknown error occurred' };
-    }
+    throw error;
   }
 };
 
