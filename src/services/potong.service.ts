@@ -9,7 +9,7 @@ export const getAllDataPotong = async (): Promise<ProductResultType> => {
 
     // Mengecek apakah ada data
     if (snapshot.empty) {
-      return { success: false, message: 'No potong data found' };
+      return { success: false, message: 'No data potong found' };
     }
 
     // Membuat array untuk menampung data
@@ -33,7 +33,7 @@ export const getDataPotongById = async (id: string): Promise<ProductResultType> 
     const snapshot = await db.collection('potongs').doc(id).get();
 
     if (!snapshot.exists) {
-      return { success: false, message: 'No potong data found for ID: ' + id };
+      return { success: false, message: 'No data potong found for ID: ' + id };
     }
 
     return {
