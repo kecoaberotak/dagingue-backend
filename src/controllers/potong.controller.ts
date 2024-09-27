@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { logError, logInfo } from '../utils/logger';
 import { addDataPotong, getAllDataPotong, getDataPotongById } from '../services/potong.service';
-import { createPotongValidation } from '../validations/potong.validation';
+import { createProductValidation } from '../validations/product.validation';
 import { ResponseDataType } from '../types/product.type';
 
 export const getPotong = async (req: Request, res: Response) => {
@@ -59,7 +59,7 @@ export const addPotong = async (req: Request, res: Response) => {
   }
 
   // Validasi inputan user menggunakan Joi
-  const { error, value } = createPotongValidation({
+  const { error, value } = createProductValidation({
     name,
     desc,
     price,
