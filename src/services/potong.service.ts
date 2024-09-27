@@ -21,7 +21,7 @@ export const getAllDataPotong = async (): Promise<ProductResultType> => {
     return {
       success: true,
       message: 'Success get all data potong',
-      data: data,
+      data,
     };
   } catch (error) {
     throw error;
@@ -71,7 +71,10 @@ export const addDataPotong = async (payload: ProductType): Promise<ProductResult
     };
   } catch (error) {
     if (error instanceof Error) {
-      return { success: false, message: `Error occurred while executing uploadImageToStorage: ${error.message}` };
+      return {
+        success: false,
+        message: `Error occurred while executing uploadImageToStorage: ${error.message}`,
+      };
     } else {
       return { success: false, message: 'Unknown error occurred while executing uploadImageToStorage' };
     }
