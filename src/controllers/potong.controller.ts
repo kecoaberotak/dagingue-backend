@@ -1,7 +1,13 @@
 import { Request, Response } from 'express';
 import { logError, logInfo } from '../utils/logger';
-import { addDataPotong, deleteDataPotongById, getAllDataPotong, getDataPotongById } from '../services/potong.service';
-import { createProductValidation } from '../validations/product.validation';
+import {
+  addDataPotong,
+  deleteDataPotongById,
+  editDataPotongById,
+  getAllDataPotong,
+  getDataPotongById,
+} from '../services/potong.service';
+import { createProductValidation, upadateProductValidation } from '../validations/product.validation';
 import { ResponseDataType } from '../types/product.type';
 
 export const getPotong = async (req: Request, res: Response) => {
@@ -146,6 +152,44 @@ export const deletePotong = async (req: Request, res: Response) => {
         message: 'Unknown error occurred',
       };
       return res.status(500).send(response);
+    }
+  }
+};
+
+export const updatePotong = async (req: Request, res: Response) => {
+  const {
+    params: { id },
+  } = req;
+
+  const { error, value } = upadateProductValidation(req.body);
+
+  if (error) {
+    logError(`Failed to validate update potong: ${error.details[0].message}`);
+    return res.status(422).send({
+      status: false,
+      statusCode: 422,
+      message: error.details[0].message,
+      data: {},
+    });
+  }
+
+  try {
+    const result = await editDataPotongById(id, { ...value, image: req.file || value.image });
+
+    if (result.success) {
+      logInfo(result.message);
+      return res.status(200).send({ status: true, statusCode: 200, data: result.data });
+    } else {
+      logError(result.message);
+      return res.status(404).send({ status: false, statusCode: 404, message: result.message });
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      logError('Error occurred while updating potong data', error);
+      return res.status(500).send({ status: false, statusCode: 500, message: error.message });
+    } else {
+      logError('Unknown error occurred while updating potong data');
+      return res.status(500).send({ status: false, statusCode: 500, message: 'Unknown error occurred' });
     }
   }
 };
