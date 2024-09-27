@@ -1,6 +1,5 @@
 import { db } from '../lib/firebase/init';
 import { PotongType, UploadPotongResult } from '../types/potong.type';
-import { logger } from '../utils/logger';
 import { uploadImageToStorage } from '../utils/uploadImageToStorage';
 
 export const getAllDataPotong = async (): Promise<UploadPotongResult> => {
@@ -10,7 +9,6 @@ export const getAllDataPotong = async (): Promise<UploadPotongResult> => {
 
     // Mengecek apakah ada data
     if (snapshot.empty) {
-      logger.info('No potong data found');
       return { success: false, message: 'No potong data found' };
     }
 
@@ -22,15 +20,13 @@ export const getAllDataPotong = async (): Promise<UploadPotongResult> => {
 
     return {
       success: true,
-      message: 'Success upload new data potong to Database',
+      message: 'Success get all data potong',
       data: data,
     };
   } catch (error) {
     if (error instanceof Error) {
-      logger.error(`Err: potong - get all data = ${error.message}`);
       return { success: false, message: error.message };
     } else {
-      logger.error('Err: potong - get all data = Unknown error');
       return { success: false, message: 'Unknown error occurred' };
     }
   }
@@ -41,23 +37,16 @@ export const getDataPotongById = async (id: string): Promise<UploadPotongResult>
     const snapshot = await db.collection('potongs').doc(id).get();
 
     if (!snapshot.exists) {
-      logger.info('No potong data found for ID: ' + id);
       return { success: false, message: 'No potong data found for ID: ' + id };
     }
 
     return {
       success: true,
-      message: 'Success upload new data potong to Database',
+      message: 'Success get data potong for ID: ' + id,
       data: { id: snapshot.id, ...snapshot.data() },
     };
   } catch (error) {
-    if (error instanceof Error) {
-      logger.error(`Err: potong - get data by id = ${error.message}`);
-      return { success: false, message: error.message };
-    } else {
-      logger.error('Err: potong - get data by id = Unknown error');
-      return { success: false, message: 'Unknown error occurred' };
-    }
+    throw error;
   }
 };
 
@@ -66,19 +55,14 @@ export const addDataPotong = async (payload: PotongType): Promise<UploadPotongRe
 
   try {
     // Upload gambar ke Cloud Storage
-    const result = await uploadImageToStorage(image as Express.Multer.File);
-
-    if (!result.success) {
-      logger.info(`Upload image failed: ${result.message}`);
-      return { success: false, message: 'Upload image failed to Storage' };
-    }
+    const imageLink = await uploadImageToStorage(image as Express.Multer.File);
 
     // Simpan data ke Firestore
     const newData = {
       name,
       desc,
-      price, // Konversi harga menjadi angka jika dikirim dalam string
-      image: result.imageLink, // URL gambar dari Cloud Storage
+      price,
+      image: imageLink,
       createdAt: new Date(), // Tambahkan timestamp
     };
 
@@ -91,11 +75,9 @@ export const addDataPotong = async (payload: PotongType): Promise<UploadPotongRe
     };
   } catch (error) {
     if (error instanceof Error) {
-      logger.error(`Err: potong - add data to database = ${error.message}`);
-      return { success: false, message: error.message };
+      return { success: false, message: `Error occurred while executing uploadImageToStorage: ${error.message}` };
     } else {
-      logger.error('Err: potong - add data to database = Unknown error');
-      return { success: false, message: 'Unknown error occurred' };
+      return { success: false, message: 'Unknown error occurred while executing uploadImageToStorage' };
     }
   }
 };

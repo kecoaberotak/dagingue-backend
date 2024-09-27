@@ -1,9 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { storage } from '../lib/firebase/init';
-import { logger } from './logger';
-import UploadImageResult from '../types/utils.type';
 
-export const uploadImageToStorage = async (file: Express.Multer.File): Promise<UploadImageResult> => {
+export const uploadImageToStorage = async (file: Express.Multer.File): Promise<string> => {
   try {
     // Generate Unique file name
     const fileExtension = file.mimetype.split('/')[1];
@@ -23,14 +21,8 @@ export const uploadImageToStorage = async (file: Express.Multer.File): Promise<U
 
     // Dapatkan URL public
     const publicUrl = `https://storage.googleapis.com/${bucket.name}/${fileRef.name}`;
-    return { success: true, message: 'Success upload file to Storage', imageLink: publicUrl };
+    return publicUrl;
   } catch (error) {
-    if (error instanceof Error) {
-      logger.error(`Err: potong - upload image to storage = ${error.message}`);
-      return { success: false, message: error.message };
-    } else {
-      logger.error('Err: potong - upload image to storage = Unknown error');
-      return { success: false, message: 'Unknown error occurred' };
-    }
+    throw error;
   }
 };

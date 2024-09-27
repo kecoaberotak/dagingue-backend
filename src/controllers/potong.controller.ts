@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { logger } from '../utils/logger';
+import { logError, logInfo } from '../utils/logger';
 import { addDataPotong, getAllDataPotong, getDataPotongById } from '../services/potong.service';
 import { createPotongValidation } from '../validations/potong.validation';
 
@@ -12,15 +12,20 @@ export const getPotong = async (req: Request, res: Response) => {
     const result = id ? await getDataPotongById(id) : await getAllDataPotong();
 
     if (result.success) {
-      logger.info(`Success get data ${id ? 'detail ' : ''}potong`);
+      logInfo(result.message);
       return res.status(200).send({ status: true, statusCode: 200, data: result.data });
     } else {
-      logger.info('Data not found');
+      logError(`Failed to ${id ? 'get data potong by id' : 'get all data potong'}: ${result.message}`);
       return res.status(404).send({ status: false, statusCode: 404, message: result.message });
     }
   } catch (error) {
-    logger.error(`Err: potong - get = ${error}`);
-    return res.status(500).send({ status: false, statusCode: 500, message: 'Internal Server Error' });
+    if (error instanceof Error) {
+      logError(`Error occurred while executing ${id ? 'getDataPotongById' : 'getAllDataPotong'}`, error);
+      return res.status(500).send({ status: false, statusCode: 500, message: error.message });
+    } else {
+      logError(`Unknown error occurred while executing ${id ? 'getDataPotongById' : 'getAllDataPotong'}`);
+      return res.status(500).send({ status: false, statusCode: 500, message: 'Unknown error occurred' });
+    }
   }
 };
 
@@ -28,8 +33,8 @@ export const addPotong = async (req: Request, res: Response) => {
   const { name, desc, price } = req.body;
 
   if (!req.file) {
-    logger.info('Missing image file');
-    return res.status(400).send({ message: 'Missing image file' });
+    logError('Failed add data potong: Missing image file');
+    return res.status(400).send({ status: false, statusCode: 400, message: 'Missing image file' });
   }
 
   // Validasi inputan user menggunakan Joi
@@ -41,7 +46,7 @@ export const addPotong = async (req: Request, res: Response) => {
   });
 
   if (error) {
-    logger.error(`Err: potong - create = ${error.details[0].message}`);
+    logError(`Validation error while creating potong: ${error.details[0].message}`);
     return res.status(422).send({
       status: false,
       statusCode: 422,
@@ -54,18 +59,18 @@ export const addPotong = async (req: Request, res: Response) => {
   try {
     const result = await addDataPotong({ name: value.name, desc: value.desc, price: value.price, image: req.file });
     if (result.success) {
-      logger.info('Success add data potong');
+      logInfo(result.message);
       return res.status(201).send({ status: true, statusCode: 201, message: result.message, data: result.data });
     } else {
-      logger.info(result.message);
-      return res.status(400).send({ status: false, statusCode: 400, message: result.message });
+      logError(result.message);
+      return res.status(500).send({ status: false, statusCode: 500, message: result.message });
     }
   } catch (error) {
     if (error instanceof Error) {
-      logger.error(`Err: potong - create data potong = ${error.message}`, { stack: error.stack });
+      logError('Error occurred while executing addDataPotong', error);
       return res.status(500).send({ status: false, statusCode: 500, message: error.message });
     } else {
-      logger.error('Err: potong - create data potong = Unknown error');
+      logError('Unknown error occurred while executing addDataPotong');
       return res.status(500).send({ status: false, statusCode: 500, message: 'Unknown error occurred' });
     }
   }
