@@ -66,10 +66,10 @@ export const addDataBumbu = async (payload: ProductType): Promise<ProductResultT
     if (error instanceof Error) {
       return {
         success: false,
-        message: `Error occurred while add new data potong: ${error.message}`,
+        message: `Error occurred while add new data bumbu: ${error.message}`,
       };
     } else {
-      return { success: false, message: 'Unknown error occurred while add new data potong' };
+      return { success: false, message: 'Unknown error occurred while add new data bumbu' };
     }
   }
 };
