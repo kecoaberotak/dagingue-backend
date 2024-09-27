@@ -1,8 +1,8 @@
 import { db } from '../lib/firebase/init';
-import { PotongType, PotongResultType } from '../types/potong.type';
+import { ProductType, ProductResultType } from '../types/product.type';
 import { uploadImageToStorage } from '../utils/uploadImageToStorage';
 
-export const getAllDataPotong = async (): Promise<PotongResultType> => {
+export const getAllDataPotong = async (): Promise<ProductResultType> => {
   try {
     // ambil semua data
     const snapshot = await db.collection('potongs').get();
@@ -32,7 +32,7 @@ export const getAllDataPotong = async (): Promise<PotongResultType> => {
   }
 };
 
-export const getDataPotongById = async (id: string): Promise<PotongResultType> => {
+export const getDataPotongById = async (id: string): Promise<ProductResultType> => {
   try {
     const snapshot = await db.collection('potongs').doc(id).get();
 
@@ -50,7 +50,7 @@ export const getDataPotongById = async (id: string): Promise<PotongResultType> =
   }
 };
 
-export const addDataPotong = async (payload: PotongType): Promise<PotongResultType> => {
+export const addDataPotong = async (payload: ProductType): Promise<ProductResultType> => {
   const { name, desc, price, image } = payload;
 
   try {

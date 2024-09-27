@@ -1,7 +1,7 @@
 import Joi from 'joi';
-import { PotongType } from '../types/potong.type';
+import { ProductType } from '../types/product.type';
 
-export const createPotongValidation = (payload: PotongType) => {
+export const createPotongValidation = (payload: ProductType) => {
   const schema = Joi.object({
     name: Joi.string().required().messages({
       'any.required': 'Nama tidak boleh kosong atau data tidak valid',
