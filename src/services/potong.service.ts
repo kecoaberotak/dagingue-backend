@@ -51,7 +51,7 @@ export const addDataPotong = async (payload: ProductType): Promise<ProductResult
 
   try {
     // Upload gambar ke Cloud Storage
-    const imageLink = await uploadImageToStorage(image as Express.Multer.File);
+    const imageLink = await uploadImageToStorage(image as Express.Multer.File, 'potong_image');
 
     // Simpan data ke Firestore
     const newData = {
@@ -73,10 +73,10 @@ export const addDataPotong = async (payload: ProductType): Promise<ProductResult
     if (error instanceof Error) {
       return {
         success: false,
-        message: `Error occurred while executing uploadImageToStorage: ${error.message}`,
+        message: `Error occurred while add new data potong: ${error.message}`,
       };
     } else {
-      return { success: false, message: 'Unknown error occurred while executing uploadImageToStorage' };
+      return { success: false, message: 'Unknown error occurred while add new data potong' };
     }
   }
 };
