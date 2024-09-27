@@ -1,5 +1,7 @@
-import { db } from '../lib/firebase/init';
+import { db, storage } from '../lib/firebase/init';
 import { ProductType, ProductResultType } from '../types/product.type';
+import { extractFileNameFromUrl } from '../utils/extractFileNameFromUrl';
+import { logInfo } from '../utils/logger';
 import { uploadImageToStorage } from '../utils/uploadImageToStorage';
 
 export const getAllDataBumbu = async (): Promise<ProductResultType> => {
@@ -71,5 +73,37 @@ export const addDataBumbu = async (payload: ProductType): Promise<ProductResultT
     } else {
       return { success: false, message: 'Unknown error occurred while add new data bumbu' };
     }
+  }
+};
+
+export const deleteDataBumbuById = async (id: string): Promise<ProductResultType> => {
+  try {
+    const bumbuRef = db.collection('bumbus').doc(id);
+    const snapshot = await bumbuRef.get();
+
+    if (!snapshot.exists) {
+      return { success: false, message: 'No data bumbu found for ID: ' + id };
+    }
+
+    const data = snapshot.data();
+    const imageUrl = data?.image;
+
+    if (imageUrl) {
+      const fileName = extractFileNameFromUrl(imageUrl);
+      const fileRef = storage.bucket().file(fileName);
+
+      // Hapus file
+      await fileRef.delete();
+      logInfo(`File ${fileName} deleted from Cloud Storage`);
+    }
+
+    // hapus document
+    await bumbuRef.delete();
+    return { success: true, message: `Success delete data bumbu for ID: ${id}` };
+  } catch (error) {
+    if (error instanceof Error) {
+      return { success: false, message: error.message };
+    }
+    return { success: false, message: 'Unknown error occurred during deletion' };
   }
 };
