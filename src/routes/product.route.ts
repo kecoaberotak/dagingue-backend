@@ -11,4 +11,4 @@ ProductRoute.post('/potong', upload.single('image'), addPotong);
 
 ProductRoute.get('/bumbu', getBumbu);
 ProductRoute.get('/bumbu/:id', getBumbu);
-ProductRoute.post('/potong', upload.single('image'), addBumbu);
+ProductRoute.post('/bumbu', upload.single('image'), addBumbu);
