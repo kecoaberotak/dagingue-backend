@@ -47,7 +47,7 @@ export const addDataBumbu = async (payload: ProductType): Promise<ProductResultT
   const { name, desc, price, image } = payload;
 
   try {
-    const imageLink = uploadImageToStorage(image as Express.Multer.File, 'bumbu_image');
+    const imageLink = await uploadImageToStorage(image as Express.Multer.File, 'bumbu_image');
 
     const newData = {
       name,
