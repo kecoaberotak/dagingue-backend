@@ -1,13 +1,13 @@
 import { v4 as uuidv4 } from 'uuid';
 import { storage } from '../lib/firebase/init';
 
-export const uploadImageToStorage = async (file: Express.Multer.File): Promise<string> => {
+export const uploadImageToStorage = async (file: Express.Multer.File, bucket: string): Promise<string> => {
   try {
     // Generate Unique file name
     const fileExtension = file.mimetype.split('/')[1];
     const filename = `${uuidv4()}.${fileExtension}`;
     const bucket = storage.bucket();
-    const fileRef = bucket.file(`potong_image/${filename}`);
+    const fileRef = bucket.file(`${bucket}/${filename}`);
 
     // Upload file ke Cloud Storage
     await fileRef.save(file.buffer, {
