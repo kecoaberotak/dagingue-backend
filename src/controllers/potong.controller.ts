@@ -62,7 +62,7 @@ export const addPotong = async (req: Request, res: Response) => {
     }
   } catch (error) {
     if (error instanceof Error) {
-      logger.error(`Err: potong - create data potong = ${error.message}`);
+      logger.error(`Err: potong - create data potong = ${error.message}`, { stack: error.stack });
       return res.status(500).send({ status: false, statusCode: 500, message: error.message });
     } else {
       logger.error('Err: potong - create data potong = Unknown error');
