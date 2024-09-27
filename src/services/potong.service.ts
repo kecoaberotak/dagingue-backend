@@ -1,5 +1,7 @@
-import { db } from '../lib/firebase/init';
+import { db, storage } from '../lib/firebase/init';
 import { ProductType, ProductResultType } from '../types/product.type';
+import { extractFileNameFromUrl } from '../utils/extractFileNameFromUrl';
+import { logInfo } from '../utils/logger';
 import { uploadImageToStorage } from '../utils/uploadImageToStorage';
 
 export const getAllDataPotong = async (): Promise<ProductResultType> => {
@@ -78,5 +80,40 @@ export const addDataPotong = async (payload: ProductType): Promise<ProductResult
     } else {
       return { success: false, message: 'Unknown error occurred while add new data potong' };
     }
+  }
+};
+
+export const deleteDataPotongById = async (id: string): Promise<ProductResultType> => {
+  try {
+    const potongRef = db.collection('potongs').doc(id); // referensi ke dokumen yang mau dihapus
+    const snapshot = await potongRef.get();
+
+    // check apakah dokumen ada
+    if (!snapshot.exists) {
+      return { success: false, message: 'No data potong found for ID: ' + id };
+    }
+
+    // Dapatkan ULR gambar dari document
+    const data = snapshot.data();
+    const imageUrl = data?.image;
+
+    // Hapus file dari Cloud Storage jika ada
+    if (imageUrl) {
+      const fileName = extractFileNameFromUrl(imageUrl); // extract nama file dari URL
+      const fileRef = storage.bucket().file(fileName);
+
+      // Hapus file
+      await fileRef.delete();
+      logInfo(`File ${fileName} deleted from Cloud Storage`);
+    }
+
+    // hapus document
+    await potongRef.delete();
+    return { success: true, message: `Success delete data potong for ID: ${id}` };
+  } catch (error) {
+    if (error instanceof Error) {
+      return { success: false, message: error.message };
+    }
+    return { success: false, message: 'Unknown error occurred during deletion' };
   }
 };
