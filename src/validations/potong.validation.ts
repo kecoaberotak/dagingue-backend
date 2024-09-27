@@ -3,13 +3,24 @@ import { PotongType } from '../types/potong.type';
 
 export const createPotongValidation = (payload: PotongType) => {
   const schema = Joi.object({
-    name: Joi.string().required(),
-    desc: Joi.string().required(),
-    price: Joi.number().required(),
-    // Joi.alternatives() ??
-    image: Joi.string().required().messages({
-      'any.required': 'Gambar harus diupload',
+    name: Joi.string().required().messages({
+      'any.required': 'Nama tidak boleh kosong atau data tidak valid',
     }),
+    desc: Joi.string().required().messages({
+      'any.required': 'Deskripsi tidak boleh kosong atau data tidak valid',
+    }),
+    price: Joi.number().required().messages({
+      'any.required': 'Harga tidak boleh kosong atau data tidak valid',
+    }),
+    image: Joi.object({
+      mimetype: Joi.string().valid('image/jpeg', 'image/png', 'image/gif').required().messages({
+        'any.only': 'File harus berupa gambar dengan format jpeg, png, atau gif',
+        'any.required': 'File gambar wajib diunggah',
+      }),
+    })
+      .unknown(true) // Mengizinkan properti lain dari Multer
+      .required()
+      .messages({ 'object.base': 'File image tidak valid', 'any.required': 'File gambar wajib diunggah' }),
   });
 
   return schema.validate(payload);
