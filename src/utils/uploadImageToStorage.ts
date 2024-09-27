@@ -4,14 +4,6 @@ import { logger } from './logger';
 import UploadImageResult from '../types/utils.type';
 
 export const uploadImageToStorage = async (file: Express.Multer.File): Promise<UploadImageResult> => {
-  const fileType = ['image/jpeg', 'image/jpg', 'image/png'];
-
-  // validasi tipe file
-  if (!fileType.includes(file.mimetype)) {
-    logger.info('Format file tidak valid');
-    return { success: false, message: 'Format file tidak valid' };
-  }
-
   try {
     // Generate Unique file name
     const fileExtension = file.mimetype.split('/')[1];
