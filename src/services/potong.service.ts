@@ -1,7 +1,8 @@
 import { db, storage } from '../lib/firebase/init';
 import { ProductType, ProductResultType } from '../types/product.type';
+import { deleteImageFromStorage } from '../utils/deleteImageFromStorage';
 import { extractFileNameFromUrl } from '../utils/extractFileNameFromUrl';
-import { logInfo } from '../utils/logger';
+import { logError, logInfo } from '../utils/logger';
 import { uploadImageToStorage } from '../utils/uploadImageToStorage';
 
 export const getAllDataPotong = async (): Promise<ProductResultType> => {
@@ -99,12 +100,14 @@ export const deleteDataPotongById = async (id: string): Promise<ProductResultTyp
 
     // Hapus file dari Cloud Storage jika ada
     if (imageUrl) {
-      const fileName = extractFileNameFromUrl(imageUrl); // extract nama file dari URL
-      const fileRef = storage.bucket().file(fileName);
-
-      // Hapus file
-      await fileRef.delete();
-      logInfo(`File ${fileName} deleted from Cloud Storage`);
+      try {
+        await deleteImageFromStorage(imageUrl);
+      } catch (error) {
+        if (error instanceof Error) {
+          return { success: false, message: `Failed to delete image for potong with ID ${id}: ${error.message}` };
+        }
+        return { success: false, message: 'Unknown error occurred during deletion' };
+      }
     }
 
     // hapus document
@@ -112,7 +115,7 @@ export const deleteDataPotongById = async (id: string): Promise<ProductResultTyp
     return { success: true, message: `Success delete data potong for ID: ${id}` };
   } catch (error) {
     if (error instanceof Error) {
-      return { success: false, message: error.message };
+      return { success: false, message: `Failed to delete image for potong with ID ${id}: ${error.message}` };
     }
     return { success: false, message: 'Unknown error occurred during deletion' };
   }
