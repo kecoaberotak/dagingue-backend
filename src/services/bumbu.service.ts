@@ -90,12 +90,14 @@ export const deleteDataBumbuById = async (id: string): Promise<ProductResultType
     const imageUrl = data?.image;
 
     if (imageUrl) {
-      const fileName = extractFileNameFromUrl(imageUrl);
-      const fileRef = storage.bucket().file(fileName);
-
-      // Hapus file
-      await fileRef.delete();
-      logInfo(`File ${fileName} deleted from Cloud Storage`);
+      try {
+        await deleteImageFromStorage(imageUrl);
+      } catch (error) {
+        if (error instanceof Error) {
+          return { success: false, message: `Failed to delete image for bumbu with ID ${id}: ${error.message}` };
+        }
+        return { success: false, message: 'Unknown error occurred during deletion' };
+      }
     }
 
     // hapus document
