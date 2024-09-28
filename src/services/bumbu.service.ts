@@ -111,7 +111,7 @@ export const deleteDataBumbuById = async (id: string): Promise<ProductResultType
   }
 };
 
-export const updateDataBumbuById = async (id: string, payload: ProductType) => {
+export const editDataBumbuById = async (id: string, payload: ProductType) => {
   try {
     const bumbuRef = db.collection('bumbus').doc(id);
     const snapshot = await bumbuRef.get();
