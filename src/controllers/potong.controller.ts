@@ -161,7 +161,14 @@ export const updatePotong = async (req: Request, res: Response) => {
     params: { id },
   } = req;
 
-  const { error, value } = upadateProductValidation(req.body);
+  const { name, desc, price } = req.body;
+
+  const { error, value } = upadateProductValidation({
+    name,
+    desc,
+    price,
+    image: req.file ? req.file : req.body.image,
+  });
 
   if (error) {
     logError(`Failed to validate update potong: ${error.details[0].message}`);
