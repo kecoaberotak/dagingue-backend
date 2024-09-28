@@ -9,7 +9,7 @@ ProductRoute.get('/potong', getPotong);
 ProductRoute.get('/potong/:id', getPotong);
 ProductRoute.post('/potong', upload.single('image'), addPotong);
 ProductRoute.delete('/potong/:id', deletePotong);
-ProductRoute.put('/potong/:id', updatePotong);
+ProductRoute.put('/potong/:id', upload.single('image'), updatePotong);
 
 ProductRoute.get('/bumbu', getBumbu);
 ProductRoute.get('/bumbu/:id', getBumbu);
