@@ -1,5 +1,6 @@
 import { db, storage } from '../lib/firebase/init';
 import { ProductType, ProductResultType } from '../types/product.type';
+import { deleteImageFromStorage } from '../utils/deleteImageFromStorage';
 import { extractFileNameFromUrl } from '../utils/extractFileNameFromUrl';
 import { logInfo } from '../utils/logger';
 import { uploadImageToStorage } from '../utils/uploadImageToStorage';
@@ -105,5 +106,49 @@ export const deleteDataBumbuById = async (id: string): Promise<ProductResultType
       return { success: false, message: error.message };
     }
     return { success: false, message: 'Unknown error occurred during deletion' };
+  }
+};
+
+export const updateDataBumbuById = async (id: string, payload: ProductType) => {
+  try {
+    const bumbuRef = db.collection('bumbus').doc(id);
+    const snapshot = await bumbuRef.get();
+
+    if (!snapshot.exists) {
+      return { success: false, message: 'No bumbu data found for ID: ' + id };
+    }
+
+    let updatedImageLink: string | undefined = payload.image as string;
+
+    if (payload.image && typeof payload.image !== 'string') {
+      updatedImageLink = await uploadImageToStorage(payload.image, 'bumbu_image');
+
+      try {
+        await deleteImageFromStorage(snapshot.data()?.image);
+      } catch (error) {
+        if (error instanceof Error) {
+          return { success: false, message: `Failed to delete image for bumbu with ID ${id}: ${error.message}` };
+        }
+        return { success: false, message: 'Unknown error occurred during deletion' };
+      }
+    }
+
+    const updatedData = {
+      name: payload.name ?? snapshot.data()?.name,
+      desc: payload.desc ?? snapshot.data()?.desc,
+      price: payload.price ?? snapshot.data()?.price,
+      image: updatedImageLink || snapshot.data()?.image,
+      updatedAt: new Date(),
+    };
+
+    await bumbuRef.update(updatedData);
+
+    return {
+      success: true,
+      message: 'Success update bumbu data for ID: ' + id,
+      data: { id: snapshot.id, ...updatedData },
+    };
+  } catch (error) {
+    throw error;
   }
 };
