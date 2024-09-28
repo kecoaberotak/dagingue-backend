@@ -118,7 +118,7 @@ export const deleteDataPotongById = async (id: string): Promise<ProductResultTyp
   }
 };
 
-export const editDataPotongById = async (id: string, payload: ProductType) => {
+export const editDataPotongById = async (id: string, payload: ProductType): Promise<ProductResultType> => {
   try {
     const potongRef = db.collection('potongs').doc(id);
     const snapshot = await potongRef.get();
