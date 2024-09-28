@@ -136,8 +136,9 @@ export const editDataPotongById = async (id: string, payload: ProductType) => {
     }
 
     const updatedData = {
-      ...snapshot.data(),
-      ...payload, // merge payload dengan data lama
+      name: payload.name ?? snapshot.data()?.name,
+      desc: payload.desc ?? snapshot.data()?.desc,
+      price: payload.price ?? snapshot.data()?.price, // `0` akan tetap diambil dari `payload.price`
       image: updatedImageLink || snapshot.data()?.image, // Simpan link image baru atau gunakan link yang lama
       updatedAt: new Date(),
     };
@@ -151,9 +152,6 @@ export const editDataPotongById = async (id: string, payload: ProductType) => {
       data: { id: snapshot.id, ...updatedData },
     };
   } catch (error) {
-    if (error instanceof Error) {
-      return { success: false, message: error.message };
-    }
-    return { success: false, message: 'Unknown error occurred during update' };
+    throw error;
   }
 };
