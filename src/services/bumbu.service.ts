@@ -1,8 +1,6 @@
-import { db, storage } from '../lib/firebase/init';
+import { db } from '../lib/firebase/init';
 import { ProductType, ProductResultType } from '../types/product.type';
 import { deleteImageFromStorage } from '../utils/deleteImageFromStorage';
-import { extractFileNameFromUrl } from '../utils/extractFileNameFromUrl';
-import { logInfo } from '../utils/logger';
 import { uploadImageToStorage } from '../utils/uploadImageToStorage';
 
 export const getAllDataBumbu = async (): Promise<ProductResultType> => {

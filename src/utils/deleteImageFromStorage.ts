@@ -1,6 +1,6 @@
 import { extractFileNameFromUrl } from './extractFileNameFromUrl';
 import { storage } from '../lib/firebase/init';
-import { logError, logInfo } from './logger';
+import { logInfo } from './logger';
 
 export const deleteImageFromStorage = async (imageUrl: string) => {
   try {
