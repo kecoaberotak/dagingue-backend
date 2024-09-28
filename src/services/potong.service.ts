@@ -136,6 +136,14 @@ export const editDataPotongById = async (id: string, payload: ProductType): Prom
     if (payload.image && typeof payload.image !== 'string') {
       // Jika image adalah file, upload ke Firebase Storage
       updatedImageLink = await uploadImageToStorage(payload.image as Express.Multer.File, 'potong_image');
+      try {
+        await deleteImageFromStorage(snapshot.data()?.image);
+      } catch (error) {
+        if (error instanceof Error) {
+          return { success: false, message: `Failed to delete image for potong with ID ${id}: ${error.message}` };
+        }
+        return { success: false, message: 'Unknown error occurred during deletion' };
+      }
     }
 
     const updatedData = {
