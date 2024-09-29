@@ -58,7 +58,7 @@ export const addPotong = async (req: Request, res: Response) => {
     const response: ResponseDataType = {
       status: false,
       statusCode: 400,
-      message: 'Missing image file',
+      message: 'File gambar wajib diunggah',
       data: {},
     };
     return res.status(400).send(response);
