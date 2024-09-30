@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { upload } from '../middlewares/multer';
-import { addAbout } from '../controllers/about.controller';
+import { addAbout, getAbout } from '../controllers/about.controller';
 
 export const ContentRoute: Router = Router();
 
@@ -12,3 +12,4 @@ ContentRoute.post(
   ]),
   addAbout,
 );
+ContentRoute.get('/about', getAbout);
