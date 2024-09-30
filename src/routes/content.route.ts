@@ -15,4 +15,11 @@ ContentRoute.post(
 ContentRoute.get('/about', getAbout);
 ContentRoute.get('/about/:id', getAbout);
 ContentRoute.delete('/about/:id', deleteAbout);
-ContentRoute.put('/about/:id', updateAbout);
+ContentRoute.put(
+  '/about/:id',
+  upload.fields([
+    { name: 'image1', maxCount: 1 },
+    { name: 'image2', maxCount: 1 },
+  ]),
+  updateAbout,
+);
