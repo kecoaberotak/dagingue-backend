@@ -160,8 +160,8 @@ export const updateAbout = async (req: Request, res: Response) => {
 
   const { error, value } = updateContentValidation({
     desc,
-    image1: files ? files.image1[0] : req.body.image1,
-    image2: files ? files.image2[0] : req.body.image2,
+    image1: files.image1 ? files.image1[0] : req.body.image1,
+    image2: files.image2 ? files.image2[0] : req.body.image2,
   });
 
   if (error) {
@@ -177,8 +177,8 @@ export const updateAbout = async (req: Request, res: Response) => {
   try {
     const result = await updateDataAboutById(id, {
       desc: value.desc,
-      image1: files.image1[0] || value.image1,
-      image2: files.image2[0] || value.image2,
+      image1: files.image1 ? files.image1[0] : value.image1,
+      image2: files.image2 ? files.image2[0] : value.image2,
     });
 
     if (result.success) {
