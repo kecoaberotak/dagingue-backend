@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { logInfo, logError } from '../utils/logger';
 import { ResponseDataType } from '../types/general.types';
 import { createContentValidation } from '../validations/content.validation';
-import { addDataAbout } from '../services/about.service';
+import { addDataAbout, getAllDataAbout } from '../services/about.service';
 
 export const addAbout = async (req: Request, res: Response) => {
   const { desc } = req.body;
@@ -60,6 +60,46 @@ export const addAbout = async (req: Request, res: Response) => {
       return res.status(500).send(response);
     } else {
       logError('Unknown error occurred while executing addDataAbout');
+      const response: ResponseDataType = {
+        status: false,
+        statusCode: 500,
+        message: 'Unknown error occurred',
+        data: {},
+      };
+      return res.status(500).send(response);
+    }
+  }
+};
+
+export const getAbout = async (req: Request, res: Response) => {
+  const {
+    params: { id },
+  } = req;
+
+  try {
+    const result = await getAllDataAbout();
+
+    if (result.success) {
+      logInfo(result.message);
+      const response: ResponseDataType = {
+        status: true,
+        statusCode: 200,
+        message: result.message,
+        data: result.data || {},
+      };
+      return res.status(200).send(response);
+    } else {
+      logError(result.message);
+      const response: ResponseDataType = { status: false, statusCode: 404, message: result.message, data: {} };
+      return res.status(404).send(response);
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      logError(`Error occurred while executing ${id ? 'getDataAboutById' : 'getAllDataAbout'}`, error);
+      const response: ResponseDataType = { status: false, statusCode: 500, message: error.message, data: {} };
+      return res.status(500).send(response);
+    } else {
+      logError(`Unknown error occurred while executing ${id ? 'getDataAboutById' : 'getAllDataAbout'}`);
       const response: ResponseDataType = {
         status: false,
         statusCode: 500,
