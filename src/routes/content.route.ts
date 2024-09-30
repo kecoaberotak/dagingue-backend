@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { upload } from '../middlewares/multer';
-import { addAbout, deleteAbout, getAbout } from '../controllers/about.controller';
+import { addAbout, deleteAbout, getAbout, updateAbout } from '../controllers/about.controller';
 
 export const ContentRoute: Router = Router();
 
@@ -15,3 +15,4 @@ ContentRoute.post(
 ContentRoute.get('/about', getAbout);
 ContentRoute.get('/about/:id', getAbout);
 ContentRoute.delete('/about/:id', deleteAbout);
+ContentRoute.put('/about/:id', updateAbout);
