@@ -26,7 +26,7 @@ export const createProductValidation = (payload: ProductType) => {
   return schema.validate(payload);
 };
 
-export const upadateProductValidation = (payload: ProductType) => {
+export const updateProductValidation = (payload: ProductType) => {
   const schema = Joi.object({
     name: Joi.string().optional().messages({
       'string.base': 'Nama tidak valid',
