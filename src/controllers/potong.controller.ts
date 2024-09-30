@@ -8,7 +8,7 @@ import {
   getDataPotongById,
 } from '../services/potong.service';
 import { createProductValidation, upadateProductValidation } from '../validations/product.validation';
-import { ResponseDataType } from '../types/product.type';
+import { ResponseDataType } from '../types/general.types';
 
 export const getPotong = async (req: Request, res: Response) => {
   const {

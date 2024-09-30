@@ -7,7 +7,7 @@ import {
   getAllDataBumbu,
   getDataBumbuById,
 } from '../services/bumbu.service';
-import { ResponseDataType } from '../types/product.type';
+import { ResponseDataType } from '../types/general.types';
 import { createProductValidation, upadateProductValidation } from '../validations/product.validation';
 
 export const getBumbu = async (req: Request, res: Response) => {
