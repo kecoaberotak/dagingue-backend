@@ -7,7 +7,7 @@ import {
   getAllDataPotong,
   getDataPotongById,
 } from '../services/potong.service';
-import { createProductValidation, upadateProductValidation } from '../validations/product.validation';
+import { createProductValidation, updateProductValidation } from '../validations/product.validation';
 import { ResponseDataType } from '../types/general.types';
 
 export const getPotong = async (req: Request, res: Response) => {
@@ -163,7 +163,7 @@ export const updatePotong = async (req: Request, res: Response) => {
 
   const { name, desc, price } = req.body;
 
-  const { error, value } = upadateProductValidation({
+  const { error, value } = updateProductValidation({
     name,
     desc,
     price,
