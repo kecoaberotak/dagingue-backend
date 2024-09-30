@@ -1,3 +1,35 @@
 import { db } from '../lib/firebase/init';
 import { uploadImageToStorage } from '../utils/uploadImageToStorage';
 import { ContentType, ContentResultType } from '../types/content.types';
+
+export const addDataAbout = async (payload: ContentType): Promise<ContentResultType> => {
+  const { desc, image1, image2 } = payload;
+
+  try {
+    const imageLink1 = await uploadImageToStorage(image1 as Express.Multer.File, 'about_image');
+    const imageLink2 = await uploadImageToStorage(image2 as Express.Multer.File, 'about_image');
+
+    const newData = {
+      desc,
+      image1: imageLink1,
+      image2: imageLink2,
+      createdAt: new Date(),
+    };
+
+    const aboutRef = await db.collection('abouts').add(newData);
+    return {
+      success: true,
+      message: 'Success upload new data content about to Database',
+      data: { id: aboutRef.id, ...newData },
+    };
+  } catch (error) {
+    if (error instanceof Error) {
+      return {
+        success: false,
+        message: `Error occurred while add new data content about: ${error.message}`,
+      };
+    } else {
+      return { success: false, message: 'Unknown error occurred while add new data content about' };
+    }
+  }
+};
