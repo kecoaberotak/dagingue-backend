@@ -33,3 +33,26 @@ export const addDataAbout = async (payload: ContentType): Promise<ContentResultT
     }
   }
 };
+
+export const getAllDataAbout = async (): Promise<ContentResultType> => {
+  try {
+    const snapshot = await db.collection('abouts').get();
+
+    if (snapshot.empty) {
+      return { success: false, message: 'No data content about found' };
+    }
+
+    const data = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    return {
+      success: true,
+      message: 'Success get data content about',
+      data,
+    };
+  } catch (error) {
+    throw error;
+  }
+};
