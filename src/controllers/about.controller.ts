@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { logInfo, logError } from '../utils/logger';
 import { ResponseDataType } from '../types/general.types';
 import { createContentValidation } from '../validations/content.validation';
-import { addDataAbout, getAllDataAbout } from '../services/about.service';
+import { addDataAbout, getAllDataAbout, getDataAboutById } from '../services/about.service';
 
 export const addAbout = async (req: Request, res: Response) => {
   const { desc } = req.body;
@@ -77,7 +77,7 @@ export const getAbout = async (req: Request, res: Response) => {
   } = req;
 
   try {
-    const result = await getAllDataAbout();
+    const result = id ? await getDataAboutById(id) : await getAllDataAbout();
 
     if (result.success) {
       logInfo(result.message);
