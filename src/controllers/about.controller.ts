@@ -1,8 +1,14 @@
 import { Request, Response } from 'express';
 import { logInfo, logError } from '../utils/logger';
 import { ResponseDataType } from '../types/general.types';
-import { createContentValidation } from '../validations/content.validation';
-import { addDataAbout, deleteDataAboutById, getAllDataAbout, getDataAboutById } from '../services/about.service';
+import { createContentValidation, updateContentValidation } from '../validations/content.validation';
+import {
+  addDataAbout,
+  deleteDataAboutById,
+  getAllDataAbout,
+  getDataAboutById,
+  updateDataAboutById,
+} from '../services/about.service';
 
 export const addAbout = async (req: Request, res: Response) => {
   const { desc } = req.body;
@@ -140,6 +146,55 @@ export const deleteAbout = async (req: Request, res: Response) => {
       logError('Unknown error occurred while executing deleteDataAboutById');
       const response: ResponseDataType = { status: false, statusCode: 500, message: 'Unknown error occurred' };
       return res.status(500).send(response);
+    }
+  }
+};
+
+export const updateAbout = async (req: Request, res: Response) => {
+  const {
+    params: { id },
+  } = req;
+
+  const { desc } = req.body;
+  const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+
+  const { error, value } = updateContentValidation({
+    desc,
+    image1: files ? files.image1[0] : req.body.image1,
+    image2: files ? files.image2[0] : req.body.image2,
+  });
+
+  if (error) {
+    logError(`Failed to validate data about: ${error.details[0].message}`);
+    return res.status(422).send({
+      status: false,
+      statusCode: 422,
+      message: error.details[0].message,
+      data: {},
+    });
+  }
+
+  try {
+    const result = await updateDataAboutById(id, {
+      desc: value.desc,
+      image1: files.image1[0] || value.image1,
+      image2: files.image2[0] || value.image2,
+    });
+
+    if (result.success) {
+      logInfo(result.message);
+      return res.status(200).send({ status: true, statusCode: 200, data: result.data });
+    } else {
+      logError(result.message);
+      return res.status(404).send({ status: false, statusCode: 404, message: result.message });
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      logError('Error occurred while updating data about', error);
+      return res.status(500).send({ status: false, statusCode: 500, message: error.message });
+    } else {
+      logError('Unknown error occurred while updating data about');
+      return res.status(500).send({ status: false, statusCode: 500, message: 'Unknown error occurred' });
     }
   }
 };
