@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { logInfo, logError } from '../utils/logger';
 import { ResponseDataType } from '../types/general.types';
 import { createContentValidation } from '../validations/content.validation';
-import { addDataAbout, getAllDataAbout, getDataAboutById } from '../services/about.service';
+import { addDataAbout, deleteDataAboutById, getAllDataAbout, getDataAboutById } from '../services/about.service';
 
 export const addAbout = async (req: Request, res: Response) => {
   const { desc } = req.body;
@@ -106,6 +106,39 @@ export const getAbout = async (req: Request, res: Response) => {
         message: 'Unknown error occurred',
         data: {},
       };
+      return res.status(500).send(response);
+    }
+  }
+};
+
+export const deleteAbout = async (req: Request, res: Response) => {
+  const {
+    params: { id },
+  } = req;
+
+  try {
+    const result = await deleteDataAboutById(id);
+    if (result.success) {
+      logInfo(result.message);
+      const response: ResponseDataType = {
+        status: true,
+        statusCode: 200,
+        message: result.message,
+      };
+      return res.status(200).send(response);
+    } else {
+      logError(result.message);
+      const response: ResponseDataType = { status: false, statusCode: 400, message: result.message };
+      return res.status(400).send(response);
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      logError('Error occurred while executing deleteDataAboutById', error);
+      const response: ResponseDataType = { status: false, statusCode: 500, message: error.message };
+      return res.status(500).send(response);
+    } else {
+      logError('Unknown error occurred while executing deleteDataAboutById');
+      const response: ResponseDataType = { status: false, statusCode: 500, message: 'Unknown error occurred' };
       return res.status(500).send(response);
     }
   }
