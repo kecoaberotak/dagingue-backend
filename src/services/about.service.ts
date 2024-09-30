@@ -56,3 +56,21 @@ export const getAllDataAbout = async (): Promise<ContentResultType> => {
     throw error;
   }
 };
+
+export const getDataAboutById = async (id: string): Promise<ContentResultType> => {
+  try {
+    const snapshot = await db.collection('abouts').doc(id).get();
+
+    if (!snapshot.exists) {
+      return { success: false, message: 'No data content about found for ID: ' + id };
+    }
+
+    return {
+      success: true,
+      message: 'Success get data content about for ID: ' + id,
+      data: { id: snapshot.id, ...snapshot.data() },
+    };
+  } catch (error) {
+    throw error;
+  }
+};
