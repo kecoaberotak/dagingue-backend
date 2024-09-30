@@ -13,3 +13,4 @@ ContentRoute.post(
   addAbout,
 );
 ContentRoute.get('/about', getAbout);
+ContentRoute.get('/about/:id', getAbout);
