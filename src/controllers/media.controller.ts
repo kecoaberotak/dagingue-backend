@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { logInfo, logError } from '../utils/logger';
 import { ResponseDataType } from '../types/general.types';
 import { createMediaValidation } from '../validations/content.validation';
+import { addDataMedia } from '../services/media.service';
 
 export const addMedia = async (req: Request, res: Response) => {
   const { email, phone, address, instagram, shopee, whatsapp, maps } = req.body;
@@ -54,13 +55,42 @@ export const addMedia = async (req: Request, res: Response) => {
     return res.status(422).send(response);
   }
 
-  // test aja
-  logInfo('Success add data media');
-  const response: ResponseDataType = {
-    status: true,
-    statusCode: 200,
-    message: 'Success add data media',
-    data: {},
-  };
-  return res.status(200).send(response);
+  try {
+    const result = await addDataMedia({
+      ...value,
+      logo_image: files.logo_image[0],
+      hero_image: files.hero_image[0],
+      background_image: files.background_image[0],
+      footer_image: files.footer_image[0],
+    });
+    if (result.success) {
+      logInfo(result.message);
+      const response: ResponseDataType = {
+        status: true,
+        statusCode: 201,
+        message: result.message,
+        data: result.data || {},
+      };
+      return res.status(201).send(response);
+    } else {
+      logError(result.message);
+      const response: ResponseDataType = { status: false, statusCode: 500, message: result.message, data: {} };
+      return res.status(500).send(response);
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      logError('Error occurred while executing addDataMedia', error);
+      const response: ResponseDataType = { status: false, statusCode: 500, message: error.message, data: {} };
+      return res.status(500).send(response);
+    } else {
+      logError('Unknown error occurred while executing addDataMedia');
+      const response: ResponseDataType = {
+        status: false,
+        statusCode: 500,
+        message: 'Unknown error occurred',
+        data: {},
+      };
+      return res.status(500).send(response);
+    }
+  }
 };
