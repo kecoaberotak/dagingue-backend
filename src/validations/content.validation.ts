@@ -1,7 +1,7 @@
 import Joi from 'joi';
 import { AboutType } from '../types/content.types';
 
-export const createContentValidation = (payload: AboutType) => {
+export const createAboutValidation = (payload: AboutType) => {
   const schema = Joi.object({
     desc: Joi.string().required().messages({
       'any.required': 'Deskripsi tidak boleh kosong atau data tidak valid',
@@ -29,7 +29,7 @@ export const createContentValidation = (payload: AboutType) => {
   return schema.validate(payload);
 };
 
-export const updateContentValidation = (payload: AboutType) => {
+export const updateAboutValidation = (payload: AboutType) => {
   const schema = Joi.object({
     desc: Joi.string().optional().messages({
       'string.base': 'Deskripsi  tidak valid',

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { logInfo, logError } from '../utils/logger';
 import { ResponseDataType } from '../types/general.types';
-import { createContentValidation, updateContentValidation } from '../validations/content.validation';
+import { updateAboutValidation, createAboutValidation } from '../validations/content.validation';
 import {
   addDataAbout,
   deleteDataAboutById,
@@ -26,7 +26,7 @@ export const addAbout = async (req: Request, res: Response) => {
     return res.status(400).send(response);
   }
 
-  const { error, value } = createContentValidation({
+  const { error, value } = createAboutValidation({
     desc,
     image1: files.image1[0],
     image2: files.image2[0],
@@ -158,7 +158,7 @@ export const updateAbout = async (req: Request, res: Response) => {
   const { desc } = req.body;
   const files = req.files as { [fieldname: string]: Express.Multer.File[] };
 
-  const { error, value } = updateContentValidation({
+  const { error, value } = updateAboutValidation({
     desc,
     image1: files.image1 ? files.image1[0] : req.body.image1,
     image2: files.image2 ? files.image2[0] : req.body.image2,
