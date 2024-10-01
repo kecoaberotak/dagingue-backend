@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { logInfo, logError } from '../utils/logger';
 import { ResponseDataType } from '../types/general.types';
 import { createMediaValidation } from '../validations/content.validation';
-import { addDataMedia } from '../services/media.service';
+import { addDataMedia, getDataMedia } from '../services/media.service';
 
 export const addMedia = async (req: Request, res: Response) => {
   const { email, phone, address, instagram, shopee, whatsapp, maps } = req.body;
@@ -84,6 +84,42 @@ export const addMedia = async (req: Request, res: Response) => {
       return res.status(500).send(response);
     } else {
       logError('Unknown error occurred while executing addDataMedia');
+      const response: ResponseDataType = {
+        status: false,
+        statusCode: 500,
+        message: 'Unknown error occurred',
+        data: {},
+      };
+      return res.status(500).send(response);
+    }
+  }
+};
+
+export const getMedia = async (req: Request, res: Response) => {
+  try {
+    const result = await getDataMedia();
+
+    if (result.success) {
+      logInfo(result.message);
+      const response: ResponseDataType = {
+        status: true,
+        statusCode: 200,
+        message: result.message,
+        data: result.data || {},
+      };
+      return res.status(200).send(response);
+    } else {
+      logError(result.message);
+      const response: ResponseDataType = { status: false, statusCode: 404, message: result.message, data: {} };
+      return res.status(404).send(response);
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      logError('Error occurred while executing getDataMedia', error);
+      const response: ResponseDataType = { status: false, statusCode: 500, message: error.message, data: {} };
+      return res.status(500).send(response);
+    } else {
+      logError('Unkniwn error occurred while executing getDataMedia');
       const response: ResponseDataType = {
         status: false,
         statusCode: 500,
