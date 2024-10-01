@@ -1,10 +1,11 @@
 import { Router } from 'express';
 import { upload } from '../middlewares/multer';
 import { addAbout, deleteAbout, getAbout, updateAbout } from '../controllers/about.controller';
-import { addMedia } from '../controllers/media.controller';
+import { addMedia, getMedia } from '../controllers/media.controller';
 
 export const ContentRoute: Router = Router();
 
+// ABOUT
 // ContentRoute.post(
 //   '/about',
 //   upload.fields([
@@ -25,6 +26,7 @@ ContentRoute.put(
   updateAbout,
 );
 
+// MEDIA
 ContentRoute.post(
   '/media',
   upload.fields([
@@ -35,3 +37,4 @@ ContentRoute.post(
   ]),
   addMedia,
 );
+ContentRoute.get('/media', getMedia);
