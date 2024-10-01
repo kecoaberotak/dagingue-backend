@@ -27,11 +27,10 @@ export const addDataAbout = async (payload: AboutType): Promise<ContentResultTyp
     if (error instanceof Error) {
       return {
         success: false,
-        message: `Error occurred while add new data content about: ${error.message}`,
+        message: `Unknown error occurred during adding data content about: ${error.message}`,
       };
-    } else {
-      return { success: false, message: 'Unknown error occurred while add new data content about' };
     }
+    return { success: false, message: 'Unknown error occurred during adding data content about' };
   }
 };
 
@@ -54,7 +53,13 @@ export const getAllDataAbout = async (): Promise<ContentResultType> => {
       data,
     };
   } catch (error) {
-    throw error;
+    if (error instanceof Error) {
+      return {
+        success: false,
+        message: `Unknown error occurred during get all data content about: ${error.message}`,
+      };
+    }
+    return { success: false, message: 'Unknown error occurred during get all data content about' };
   }
 };
 
@@ -72,7 +77,13 @@ export const getDataAboutById = async (id: string): Promise<ContentResultType> =
       data: { id: snapshot.id, ...snapshot.data() },
     };
   } catch (error) {
-    throw error;
+    if (error instanceof Error) {
+      return {
+        success: false,
+        message: `Unknown error occurred during get data content about with ID ${id}: ${error.message}`,
+      };
+    }
+    return { success: false, message: 'Unknown error occurred during get data content about by id' };
   }
 };
 
@@ -125,7 +136,10 @@ export const deleteDataAboutById = async (id: string): Promise<ContentResultType
     return { success: true, message: `Success delete data content about for ID: ${id}` };
   } catch (error) {
     if (error instanceof Error) {
-      return { success: false, message: `Failed to delete image for content about with ID ${id}: ${error.message}` };
+      return {
+        success: false,
+        message: `Unknown error occurred during deletion content about with ID ${id}: ${error.message}`,
+      };
     }
     return { success: false, message: 'Unknown error occurred during deletion' };
   }
@@ -182,6 +196,12 @@ export const updateDataAboutById = async (id: string, payload: AboutType): Promi
       data: { id: snapshot.id, ...updatedData },
     };
   } catch (error) {
-    throw error;
+    if (error instanceof Error) {
+      return {
+        success: false,
+        message: `Error occurred during updating content about with ID ${id}: ${error.message}`,
+      };
+    }
+    return { success: false, message: 'Unknown error occurred during updating' };
   }
 };
