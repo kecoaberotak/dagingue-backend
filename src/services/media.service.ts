@@ -55,3 +55,27 @@ export const addDataMedia = async (payload: MediaType): Promise<ContentResultTyp
     }
   }
 };
+
+export const getDataMedia = async (): Promise<ContentResultType> => {
+  try {
+    const snapshot = await db.collection('medias').get();
+
+    if (snapshot.empty) {
+      return { success: false, message: 'No data media found' };
+    }
+
+    return {
+      success: true,
+      message: 'Success get data media',
+      data: { id: snapshot.docs[0].id, ...snapshot.docs[0].data() },
+    };
+  } catch (error) {
+    if (error instanceof Error) {
+      return {
+        success: false,
+        message: `Unknown error occurred during get data media: ${error.message}`,
+      };
+    }
+    return { success: false, message: 'Unknown error occurred during get data media' };
+  }
+};
