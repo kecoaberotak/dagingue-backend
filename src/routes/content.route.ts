@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { upload } from '../middlewares/multer';
 import { addAbout, deleteAbout, getAbout, updateAbout } from '../controllers/about.controller';
-import { addMedia, getMedia } from '../controllers/media.controller';
+import { addMedia, getMedia, updateMedia } from '../controllers/media.controller';
 
 export const ContentRoute: Router = Router();
 
@@ -27,7 +27,18 @@ ContentRoute.put(
 );
 
 // MEDIA
-ContentRoute.post(
+// ContentRoute.post(
+//   '/media',
+//   upload.fields([
+//     { name: 'logo_image', maxCount: 1 },
+//     { name: 'hero_image', maxCount: 1 },
+//     { name: 'background_image', maxCount: 1 },
+//     { name: 'footer_image', maxCount: 1 },
+//   ]),
+//   addMedia,
+// );
+ContentRoute.get('/media', getMedia);
+ContentRoute.put(
   '/media',
   upload.fields([
     { name: 'logo_image', maxCount: 1 },
@@ -35,6 +46,5 @@ ContentRoute.post(
     { name: 'background_image', maxCount: 1 },
     { name: 'footer_image', maxCount: 1 },
   ]),
-  addMedia,
+  updateMedia,
 );
-ContentRoute.get('/media', getMedia);
