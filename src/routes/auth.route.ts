@@ -4,4 +4,4 @@ import { registerAdmin } from '../controllers/auth.controller';
 
 export const AuthRoute: Router = Router();
 
-AuthRoute.get('/register', registerAdmin);
+AuthRoute.post('/register', verifyToken, registerAdmin);
