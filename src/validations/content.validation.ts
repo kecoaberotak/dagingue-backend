@@ -128,3 +128,84 @@ export const createMediaValidation = (payload: MediaType) => {
 
   return schema.validate(payload);
 };
+
+export const updateMediaValidation = (payload: MediaType) => {
+  const schema = Joi.object({
+    email: Joi.string().email().optional().messages({
+      'string.base': 'Email tidak valid',
+      'email.base': 'Email tidak valid',
+    }),
+    phone: Joi.number().optional().messages({
+      'number.base': 'Nomor telepon tidak valid',
+    }),
+    address: Joi.string().optional().messages({
+      'string.base': 'Alamat tidak valid',
+    }),
+    instagram: Joi.string().uri().optional().messages({
+      'string.base': 'Akun instagram tidak valid',
+    }),
+    shopee: Joi.string().uri().optional().messages({
+      'string.base': 'Akun shopee tidak valid',
+    }),
+    whatsapp: Joi.string().uri().optional().messages({
+      'string.base': 'Akun whatsapp tidak valid',
+    }),
+    maps: Joi.string().uri().optional().messages({
+      'string.base': 'Alamat Google Maps tidak valid',
+    }),
+    logo_image: Joi.alternatives()
+      .try(
+        Joi.string().uri().optional(),
+        Joi.object({
+          mimetype: Joi.string().valid('image/jpeg', 'image/png', 'image/gif').required().messages({
+            'any.only': 'File harus berupa gambar dengan format jpeg, png, atau gif',
+          }),
+        })
+          .unknown(true)
+          .optional()
+          .messages({ 'object.base': 'File image tidak valid' }),
+      )
+      .optional(),
+    hero_image: Joi.alternatives()
+      .try(
+        Joi.string().uri().optional(),
+        Joi.object({
+          mimetype: Joi.string().valid('image/jpeg', 'image/png', 'image/gif').required().messages({
+            'any.only': 'File harus berupa gambar dengan format jpeg, png, atau gif',
+          }),
+        })
+          .unknown(true)
+          .optional()
+          .messages({ 'object.base': 'File image tidak valid' }),
+      )
+      .optional(),
+    background_image: Joi.alternatives()
+      .try(
+        Joi.string().uri().optional(),
+        Joi.object({
+          mimetype: Joi.string().valid('image/jpeg', 'image/png', 'image/gif').required().messages({
+            'any.only': 'File harus berupa gambar dengan format jpeg, png, atau gif',
+          }),
+        })
+          .unknown(true)
+          .optional()
+          .messages({ 'object.base': 'File image tidak valid' }),
+      )
+      .optional(),
+    footer_image: Joi.alternatives()
+      .try(
+        Joi.string().uri().optional(),
+        Joi.object({
+          mimetype: Joi.string().valid('image/jpeg', 'image/png', 'image/gif').required().messages({
+            'any.only': 'File harus berupa gambar dengan format jpeg, png, atau gif',
+          }),
+        })
+          .unknown(true)
+          .optional()
+          .messages({ 'object.base': 'File image tidak valid' }),
+      )
+      .optional(),
+  });
+
+  return schema.validate(payload);
+};
