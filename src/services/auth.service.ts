@@ -1,5 +1,7 @@
 import { auth, db } from '../lib/firebase/init';
 import { v4 as uuidv4 } from 'uuid';
+import axios from 'axios';
+import CONFIG from '../config/environtment';
 import { logError, logInfo } from '../utils/logger';
 
 export const registerAdminSevice = async (payload: { username: string; email: string; password: string }) => {
@@ -20,7 +22,7 @@ export const registerAdminSevice = async (payload: { username: string; email: st
       id: uuidv4(),
       uid: userRecord.uid,
       email: userRecord.email,
-      username: userRecord.displayName,
+      displaName: userRecord.displayName,
       role: 'admin',
       createdAt: new Date(),
     };
@@ -54,5 +56,59 @@ export const registerAdminSevice = async (payload: { username: string; email: st
       logError('Unknown error occurred in registerAdminService');
       throw new Error('Unknown error occurred in registerAdminService');
     }
+  }
+};
+
+export const loginService = async (payload: { email: string; password: string }) => {
+  const { email, password } = payload;
+  try {
+    // Firebase API key
+    const apiKey = CONFIG.apiKey;
+    const signInUrl = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${apiKey}`;
+
+    // Verifikasi email dan password melalui Firebase Authentification REST API
+    const response = await axios.post(signInUrl, {
+      email,
+      password,
+      returnSecureToken: true,
+    });
+
+    // Mengambil idToken dan localId dari response
+    const { idToken, localId } = response.data;
+
+    // Ambil informasi user dari Firebase Auth berdasarkan uid (localId)
+    const user = await auth.getUser(localId);
+
+    logInfo('Login successful');
+
+    return {
+      success: true,
+      message: 'Login success',
+      token: idToken, // Mengembalikan idToken sebagai token autentikasi
+      user: {
+        uid: user.uid,
+        email: user.email,
+        displaName: user.displayName,
+      },
+    };
+
+    // Login user via Firebase Auth
+  } catch (error: any) {
+    logError(`Login failed: ${error.message}`);
+
+    // Menangani error spesifik dari Firebase Authentication API
+    if (error.response && error.response.data && error.response.data.error) {
+      const firebaseError = error.response.data.error.message;
+
+      if (firebaseError === 'EMAIL_NOT_FOUND') {
+        throw new Error('Email not registered. Please sign up first.');
+      } else if (firebaseError === 'INVALID_PASSWORD') {
+        throw new Error('Invalid password. Please try again.');
+      } else if (firebaseError === 'USER_DISABLED') {
+        throw new Error('User account has been disabled. Contact support.');
+      }
+    }
+
+    throw new Error('Failed to login. Please check your credentials.');
   }
 };
