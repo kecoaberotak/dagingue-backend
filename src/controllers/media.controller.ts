@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { logInfo, logError } from '../utils/logger';
 import { ResponseDataType } from '../types/general.types';
-import { createMediaValidation } from '../validations/content.validation';
-import { addDataMedia, getDataMedia } from '../services/media.service';
+import { createMediaValidation, updateMediaValidation } from '../validations/content.validation';
+import { addDataMedia, getDataMedia, updateDataMedia } from '../services/media.service';
 
 export const addMedia = async (req: Request, res: Response) => {
   const { email, phone, address, instagram, shopee, whatsapp, maps } = req.body;
@@ -127,6 +127,54 @@ export const getMedia = async (req: Request, res: Response) => {
         data: {},
       };
       return res.status(500).send(response);
+    }
+  }
+};
+
+export const updateMedia = async (req: Request, res: Response) => {
+  const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+
+  const { error, value } = updateMediaValidation({
+    ...req.body,
+    logo_image: files.logo_image ? files.logo_image[0] : req.body.logo_image,
+    hero_image: files.hero_image ? files.hero_image[0] : req.body.hero_image,
+    background_image: files.background_image ? files.background_image[0] : req.body.background_image,
+    footer_image: files.footer_image ? files.footer_image[0] : req.body.footer_image,
+  });
+
+  if (error) {
+    logError(`Failed to validate data media: ${error.details[0].message}`);
+    return res.status(422).send({
+      status: false,
+      statusCode: 422,
+      message: error.details[0].message,
+      data: {},
+    });
+  }
+
+  try {
+    const result = await updateDataMedia({
+      ...value,
+      logo_image: files.logo_image ? files.logo_image[0] : value.logo_image,
+      hero_image: files.hero_image ? files.hero_image[0] : value.hero_image,
+      background_image: files.background_image ? files.background_image[0] : value.background_image,
+      footer_image: files.footer_image ? files.footer_image[0] : value.footer_image,
+    });
+
+    if (result.success) {
+      logInfo(result.message);
+      return res.status(200).send({ status: true, statusCode: 200, data: result.data });
+    } else {
+      logError(result.message);
+      return res.status(404).send({ status: false, statusCode: 404, message: result.message });
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      logError('Error occurred while run updateDataMedia', error);
+      return res.status(500).send({ status: false, statusCode: 500, message: error.message });
+    } else {
+      logError('Unknown error occurred while run updateDataMedia');
+      return res.status(500).send({ status: false, statusCode: 500, message: 'Unknown error occurred' });
     }
   }
 };
