@@ -1,9 +1,7 @@
 import { Router } from 'express';
-import { logInfo } from '../utils/logger';
+import verifyToken from '../middlewares/verifyToken';
+import { registerAdmin } from '../controllers/auth.controller';
 
 export const AuthRoute: Router = Router();
 
-AuthRoute.get('/', (req, res) => {
-  logInfo('Route check success');
-  res.status(200).send({ message: 'Auth' });
-});
+AuthRoute.get('/register', registerAdmin);
