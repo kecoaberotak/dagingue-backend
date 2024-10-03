@@ -8,16 +8,14 @@ export const registerAdmin = async (req: Request, res: Response) => {
   const { error, value } = registerValidation(req.body);
 
   if (error) {
-    if (error) {
-      logError(`Validation error while register: ${error.details[0].message}`);
-      const response: ResponseDataType = {
-        status: false,
-        statusCode: 422,
-        message: error.details[0].message,
-        data: {},
-      };
-      return res.status(422).send(response);
-    }
+    logError(`Validation error while register: ${error.details[0].message}`);
+    const response: ResponseDataType = {
+      status: false,
+      statusCode: 422,
+      message: error.details[0].message,
+      data: {},
+    };
+    return res.status(422).send(response);
   }
 
   try {
@@ -58,16 +56,14 @@ export const login = async (req: Request, res: Response) => {
   const { error, value } = loginValidation(req.body);
 
   if (error) {
-    if (error) {
-      logError(`Validation error while login: ${error.details[0].message}`);
-      const response: ResponseDataType = {
-        status: false,
-        statusCode: 422,
-        message: error.details[0].message,
-        data: {},
-      };
-      return res.status(422).send(response);
-    }
+    logError(`Validation error while login: ${error.details[0].message}`);
+    const response: ResponseDataType = {
+      status: false,
+      statusCode: 422,
+      message: error.details[0].message,
+      data: {},
+    };
+    return res.status(422).send(response);
   }
 
   try {
