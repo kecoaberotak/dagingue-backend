@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { registerAdminSevice } from '../services/auth.service';
-import { logError } from '../utils/logger';
+import { loginService, registerAdminSevice } from '../services/auth.service';
+import { logError, logInfo } from '../utils/logger';
 
 export const registerAdmin = async (req: Request, res: Response) => {
   const { username, email, password } = req.body;
@@ -36,5 +36,29 @@ export const registerAdmin = async (req: Request, res: Response) => {
       logError('Unknown error occurred while register admin');
       return res.status(500).send({ status: false, statusCode: 500, message: 'Unknown error occurred', data: {} });
     }
+  }
+};
+
+export const login = async (req: Request, res: Response) => {
+  try {
+    const result = await loginService(req.body);
+    logInfo(`User logged in: ${result.user.email}`);
+
+    return res.status(200).json({
+      status: true,
+      message: result.message,
+      token: result.token, // Mengirim token ke client
+      user: result.user, // Mengirim detail user ke client
+    });
+  } catch (error: any) {
+    logError(`Error in loginController: ${error.message}`);
+
+    // Mengirim response error jika login gagal
+    return res.status(401).json({
+      status: false,
+      message: error.message || 'Failed to login',
+      statusCode: 401,
+      data: {},
+    });
   }
 };
