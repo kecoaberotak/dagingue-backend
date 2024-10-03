@@ -3,8 +3,9 @@ import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 import CONFIG from '../config/environtment';
 import { logError, logInfo } from '../utils/logger';
+import { LoginTypes, RegisterTypes } from '../types/auth.types';
 
-export const registerAdminSevice = async (payload: { name: string; email: string; password: string }) => {
+export const registerAdminSevice = async (payload: RegisterTypes) => {
   const { name, email, password } = payload;
   try {
     // Create user in Firebase Auth
@@ -59,7 +60,7 @@ export const registerAdminSevice = async (payload: { name: string; email: string
   }
 };
 
-export const loginService = async (payload: { email: string; password: string }) => {
+export const loginService = async (payload: LoginTypes) => {
   const { email, password } = payload;
   try {
     // Firebase API key
