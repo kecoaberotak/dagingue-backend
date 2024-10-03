@@ -3,18 +3,18 @@ import { loginService, registerAdminSevice } from '../services/auth.service';
 import { logError, logInfo } from '../utils/logger';
 
 export const registerAdmin = async (req: Request, res: Response) => {
-  const { username, email, password } = req.body;
+  const { name, email, password } = req.body;
 
-  if (!email || !password || !username) {
+  if (!email || !password || !name) {
     return res.status(400).send({
       status: false,
-      message: 'All fields (email, password, username) are required',
+      message: 'All fields (name, email, password) are required',
       statusCode: 400,
     });
   }
 
   try {
-    const result = await registerAdminSevice({ username, email, password });
+    const result = await registerAdminSevice({ name, email, password });
     if (result.success) {
       return res.status(201).send({
         status: true,

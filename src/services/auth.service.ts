@@ -4,14 +4,14 @@ import axios from 'axios';
 import CONFIG from '../config/environtment';
 import { logError, logInfo } from '../utils/logger';
 
-export const registerAdminSevice = async (payload: { username: string; email: string; password: string }) => {
-  const { username, email, password } = payload;
+export const registerAdminSevice = async (payload: { name: string; email: string; password: string }) => {
+  const { name, email, password } = payload;
   try {
     // Create user in Firebase Auth
     const userRecord = await auth.createUser({
       email,
       password,
-      displayName: username,
+      displayName: name,
     });
 
     // Set custom claims for role 'admin'
@@ -22,7 +22,7 @@ export const registerAdminSevice = async (payload: { username: string; email: st
       id: uuidv4(),
       uid: userRecord.uid,
       email: userRecord.email,
-      displaName: userRecord.displayName,
+      name: userRecord.displayName,
       role: 'admin',
       createdAt: new Date(),
     };
@@ -88,7 +88,7 @@ export const loginService = async (payload: { email: string; password: string })
       user: {
         uid: user.uid,
         email: user.email,
-        displaName: user.displayName,
+        name: user.displayName,
       },
     };
 
