@@ -1,20 +1,27 @@
 import { Request, Response } from 'express';
 import { loginService, registerAdminSevice } from '../services/auth.service';
 import { logError, logInfo } from '../utils/logger';
+import { registerValidation } from '../validations/auth.validation';
+import { ResponseDataType } from '../types/general.types';
 
 export const registerAdmin = async (req: Request, res: Response) => {
-  const { name, email, password } = req.body;
+  const { error, value } = registerValidation(req.body);
 
-  if (!email || !password || !name) {
-    return res.status(400).send({
-      status: false,
-      message: 'All fields (name, email, password) are required',
-      statusCode: 400,
-    });
+  if (error) {
+    if (error) {
+      logError(`Validation error while register: ${error.details[0].message}`);
+      const response: ResponseDataType = {
+        status: false,
+        statusCode: 422,
+        message: error.details[0].message,
+        data: {},
+      };
+      return res.status(422).send(response);
+    }
   }
 
   try {
-    const result = await registerAdminSevice({ name, email, password });
+    const result = await registerAdminSevice(value);
     if (result.success) {
       return res.status(201).send({
         status: true,
