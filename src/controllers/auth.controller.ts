@@ -97,11 +97,6 @@ export const deleteUser = async (req: Request, res: Response) => {
   // Ambil uid dari param jika tersedia, jika tidak gunakan dari token yang didecode di req.user
   const uid = req.params.id || (req.user as JwtPayload)?.uid;
 
-  // Jangan lupa hapus log
-  console.log(req.params.id, 'params id');
-  console.log((req.user as JwtPayload)?.uid, 'user uid');
-  console.log(uid, 'const uid');
-
   if (!uid) {
     const response: ResponseDataType = {
       status: false,
