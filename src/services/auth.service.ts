@@ -113,3 +113,25 @@ export const loginService = async (payload: LoginTypes) => {
     throw new Error('Failed to login. Please check your credentials.');
   }
 };
+
+export const deleteUserService = async (uid: string) => {
+  try {
+    // Hapus user dari Firebase Auth
+    await auth.deleteUser(uid);
+
+    // Hapus data user dari Firestore DB
+    await db.collection('admins').doc(uid).delete();
+    logInfo(`User with UID: ${uid} successfully deleted`);
+
+    return {
+      success: true,
+      message: 'User successfully deleted',
+    };
+  } catch (error) {
+    if (error instanceof Error) {
+      logError(`Failed to delete user: ${error.message}`);
+      throw new Error('Failed to delete user');
+    }
+    throw new Error('Unknown error occurred while deleting user');
+  }
+};
