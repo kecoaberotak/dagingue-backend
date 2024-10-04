@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
-import { loginService, registerAdminSevice } from '../services/auth.service';
+import { deleteUserService, loginService, registerAdminSevice } from '../services/auth.service';
 import { logError, logInfo } from '../utils/logger';
 import { loginValidation, registerValidation } from '../validations/auth.validation';
 import { ResponseDataType } from '../types/general.types';
+import { JwtPayload } from 'jsonwebtoken';
 
 export const registerAdmin = async (req: Request, res: Response) => {
   const { error, value } = registerValidation(req.body);
@@ -89,5 +90,48 @@ export const login = async (req: Request, res: Response) => {
       data: {},
     };
     return res.status(401).send(response);
+  }
+};
+
+export const deleteUser = async (req: Request, res: Response) => {
+  // Ambil uid dari param jika tersedia, jika tidak gunakan dari token yang didecode di req.user
+  const uid = req.params.id || (req.user as JwtPayload)?.uid;
+
+  // Jangan lupa hapus log
+  console.log(req.params.id, 'params id');
+  console.log((req.user as JwtPayload)?.uid, 'user uid');
+  console.log(uid, 'const uid');
+
+  if (!uid) {
+    const response: ResponseDataType = {
+      status: false,
+      statusCode: 403,
+      message: 'Unauthorized access',
+      data: {},
+    };
+    return res.status(403).send(response);
+  }
+
+  try {
+    const result = await deleteUserService(uid);
+
+    if (result.success) {
+      const response: ResponseDataType = {
+        status: true,
+        statusCode: 200,
+        message: result.message,
+        data: {},
+      };
+      return res.status(200).send(response);
+    }
+  } catch (error: any) {
+    logError(`Error deleting user: ${error.message}`);
+    const response: ResponseDataType = {
+      status: false,
+      statusCode: 500,
+      message: error.message || 'Failed to delete user',
+      data: {},
+    };
+    return res.status(500).send(response);
   }
 };
