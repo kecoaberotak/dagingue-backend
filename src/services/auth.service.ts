@@ -119,6 +119,46 @@ export const loginService = async (payload: LoginTypes) => {
   }
 };
 
+export const getDataUsers = async () => {
+  try {
+    const snapshot = await db.collection('admins').get();
+
+    if (snapshot.empty) {
+      return { success: false, message: 'No data users found' };
+    }
+
+    const data = snapshot.docs.map((doc) => ({
+      uid: doc.id,
+      ...doc.data(),
+    }));
+
+    return {
+      success: true,
+      message: 'Success get all data users',
+      data,
+    };
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getDataUserById = async (uid: string) => {
+  try {
+    const snapshot = await db.collection('admins').doc(uid).get();
+
+    if (!snapshot.exists) {
+      return { success: false, message: 'No data user found for ID: ' + uid };
+    }
+    return {
+      success: true,
+      message: 'Success get data user for ID: ' + uid,
+      data: { id: snapshot.id, ...snapshot.data() },
+    };
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const deleteUserService = async (uid: string) => {
   try {
     // Hapus user dari Firebase Auth
