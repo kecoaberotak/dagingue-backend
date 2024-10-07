@@ -1,5 +1,11 @@
 import { Request, Response } from 'express';
-import { deleteUserService, loginService, registerAdminSevice } from '../services/auth.service';
+import {
+  deleteUserService,
+  getDataUserById,
+  getDataUsers,
+  loginService,
+  registerAdminSevice,
+} from '../services/auth.service';
 import { logError, logInfo } from '../utils/logger';
 import { loginValidation, registerValidation } from '../validations/auth.validation';
 import { ResponseDataType } from '../types/general.types';
@@ -93,9 +99,47 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
+export const getUser = async (req: Request, res: Response) => {
+  const {
+    params: { uid },
+  } = req;
+  try {
+    const result = uid ? await getDataUserById(uid) : await getDataUsers();
+    if (result.success) {
+      logInfo(result.message);
+      const response: ResponseDataType = {
+        status: true,
+        statusCode: 200,
+        message: result.message,
+        data: result.data || {},
+      };
+      return res.status(200).send(response);
+    } else {
+      logError(result.message);
+      const response: ResponseDataType = { status: false, statusCode: 404, message: result.message, data: {} };
+      return res.status(404).send(response);
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      logError(`Error occurred while executing ${uid ? 'getDataUserById' : 'getDataUsers'}`, error);
+      const response: ResponseDataType = { status: false, statusCode: 500, message: error.message, data: {} };
+      return res.status(500).send(response);
+    } else {
+      logError(`Unknown error occurred while executing ${uid ? 'getDataUserById' : 'getDataUsers'}`);
+      const response: ResponseDataType = {
+        status: false,
+        statusCode: 500,
+        message: 'Unknown error occurred',
+        data: {},
+      };
+      return res.status(500).send(response);
+    }
+  }
+};
+
 export const deleteUser = async (req: Request, res: Response) => {
   // Ambil uid dari param jika tersedia, jika tidak gunakan dari token yang didecode di req.user
-  const uid = req.params.id || (req.user as JwtPayload)?.uid;
+  const uid = req.params.uid || (req.user as JwtPayload)?.uid;
 
   if (!uid) {
     const response: ResponseDataType = {
