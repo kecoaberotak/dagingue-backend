@@ -77,6 +77,10 @@ export const loginService = async (payload: LoginTypes) => {
     // Mengambil idToken dan localId dari response
     const { idToken, localId } = response.data;
 
+    // Verifikasi idToken untuk mengambil custom claims seperti role
+    const decodedToken = await auth.verifyIdToken(idToken);
+    const role = decodedToken.role; // Mengambil custom claim role
+
     // Ambil informasi user dari Firebase Auth berdasarkan uid (localId)
     const user = await auth.getUser(localId);
 
@@ -90,6 +94,7 @@ export const loginService = async (payload: LoginTypes) => {
         uid: user.uid,
         email: user.email,
         name: user.displayName,
+        role: role,
       },
     };
 
