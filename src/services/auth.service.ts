@@ -180,3 +180,33 @@ export const deleteUserService = async (uid: string) => {
     throw new Error('Unknown error occurred while deleting user');
   }
 };
+
+export const editUserService = async (uid: string, payload: RegisterTypes) => {
+  // MASIH KURANG TEPAT, KALAU USER GA INPUT DATA BARU, KARENA VALIDASINYA OPSIONAL
+  try {
+    // Update data Firebase Auth
+    const currentUser = await auth.getUser(uid);
+    const updatedUser = await auth.updateUser(uid, {
+      email: payload.email || currentUser.email,
+      password: payload.password || undefined, // Password hanya di-update jika ada, kosongkan jika tidak
+      displayName: payload.name || currentUser.displayName,
+    });
+
+    // Update data Firestore DB
+    const userRef = db.collection('admins').doc(uid);
+    const snapshot = await userRef.get();
+    await userRef.update({
+      name: payload.name || snapshot.data()?.name,
+      email: payload.email || snapshot.data()?.email,
+      updatedAt: new Date(),
+    });
+
+    return {
+      success: true,
+      message: 'User updated successfully',
+      user: updatedUser,
+    };
+  } catch (error: any) {
+    throw new Error(`Failed to update user: ${error.message}`);
+  }
+};
