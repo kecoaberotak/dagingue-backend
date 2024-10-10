@@ -195,6 +195,11 @@ export const editUserService = async (uid: string, payload: RegisterTypes) => {
     // Update data Firestore DB
     const userRef = db.collection('admins').doc(uid);
     const snapshot = await userRef.get();
+
+    if (!snapshot.exists) {
+      return { success: false, message: 'No user data found for ID: ' + uid };
+    }
+
     await userRef.update({
       name: payload.name || snapshot.data()?.name,
       email: payload.email || snapshot.data()?.email,
