@@ -1,13 +1,14 @@
 import { Request, Response } from 'express';
 import {
   deleteUserService,
+  editUserService,
   getDataUserById,
   getDataUsers,
   loginService,
   registerAdminSevice,
 } from '../services/auth.service';
 import { logError, logInfo } from '../utils/logger';
-import { loginValidation, registerValidation } from '../validations/auth.validation';
+import { loginValidation, registerValidation, updateUserValidation } from '../validations/auth.validation';
 import { ResponseDataType } from '../types/general.types';
 import { JwtPayload } from 'jsonwebtoken';
 
@@ -134,6 +135,48 @@ export const getUser = async (req: Request, res: Response) => {
       };
       return res.status(500).send(response);
     }
+  }
+};
+
+export const editUser = async (req: Request, res: Response) => {
+  const {
+    params: { uid },
+  } = req;
+
+  const { error, value } = updateUserValidation(req.body);
+
+  if (error) {
+    logError(`Failed to validate update data user: ${error.details[0].message}`);
+    const response: ResponseDataType = {
+      status: false,
+      statusCode: 422,
+      message: error.details[0].message,
+      data: {},
+    };
+    return res.status(422).send(response);
+  }
+
+  try {
+    const result = await editUserService(uid, value);
+
+    if (result.success) {
+      logInfo(result.message);
+      const response: ResponseDataType = { status: true, statusCode: 200, message: result.message, data: result.user };
+      return res.status(200).send(response);
+    } else {
+      logError(result.message);
+      const response: ResponseDataType = { status: false, statusCode: 404, message: result.message };
+      return res.status(404).send(response);
+    }
+  } catch (error: any) {
+    logError(`Error deleting user: ${error.message}`);
+    const response: ResponseDataType = {
+      status: false,
+      statusCode: 500,
+      message: error.message || 'Failed to update data user',
+      data: {},
+    };
+    return res.status(500).send(response);
   }
 };
 
