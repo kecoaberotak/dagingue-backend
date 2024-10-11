@@ -76,17 +76,28 @@ export const login = async (req: Request, res: Response) => {
 
   try {
     const result = await loginService(value);
-    logInfo(`User logged in: ${result.user.email}`);
-    const response: ResponseDataType = {
-      status: true,
-      message: result.message,
-      statusCode: 200,
-      data: {
-        token: result.token, // Mengirim token ke client
-        user: result.user, // Mengirim detail user ke client
-      },
-    };
-    return res.status(200).send(response);
+    if (result.success) {
+      logInfo(`User logged in: ${result.user?.email}`);
+      const response: ResponseDataType = {
+        status: true,
+        message: result.message,
+        statusCode: 200,
+        data: {
+          token: result.token, // Mengirim token ke client
+          user: result.user, // Mengirim detail user ke client
+        },
+      };
+      return res.status(200).send(response);
+    } else {
+      logError(`Error in loginController: ${result.message}`);
+      const response: ResponseDataType = {
+        status: false,
+        statusCode: 422,
+        message: result.message,
+        data: {},
+      };
+      return res.status(422).send(response);
+    }
   } catch (error: any) {
     logError(`Error in loginController: ${error.message}`);
     // Mengirim response error jika login gagal

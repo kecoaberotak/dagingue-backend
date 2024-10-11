@@ -82,7 +82,13 @@ export const loginService = async (payload: LoginTypes) => {
     // Ambil informasi user dari Firebase Auth berdasarkan uid (localId)
     const user = await auth.getUser(localId);
 
-    logInfo('Login successful');
+    // Check email verification
+    if (!user.emailVerified) {
+      return {
+        success: false,
+        message: 'Please verify your email before log in.',
+      };
+    }
 
     return {
       success: true,
