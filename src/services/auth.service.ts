@@ -125,10 +125,7 @@ export const getDataUsers = async () => {
       return { success: false, message: 'No data users found' };
     }
 
-    const data = snapshot.docs.map((doc) => ({
-      uid: doc.id,
-      ...doc.data(),
-    }));
+    const data = snapshot.docs.map((doc) => doc.data());
 
     return {
       success: true,
@@ -150,7 +147,7 @@ export const getDataUserById = async (uid: string) => {
     return {
       success: true,
       message: 'Success get data user for ID: ' + uid,
-      data: { id: snapshot.id, ...snapshot.data() },
+      data: snapshot.data(),
     };
   } catch (error) {
     throw error;
