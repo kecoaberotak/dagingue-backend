@@ -36,6 +36,15 @@ export const registerAdmin = async (req: Request, res: Response) => {
         data: result.data,
       };
       return res.status(201).send(response);
+    } else {
+      logError(`Error in registerAdminSevice: ${result.message}`);
+      const response: ResponseDataType = {
+        status: false,
+        statusCode: 422,
+        message: result.message,
+        data: {},
+      };
+      return res.status(422).send(response);
     }
   } catch (error) {
     if (error instanceof Error) {

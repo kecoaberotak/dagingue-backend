@@ -17,6 +17,16 @@ export const registerAdminSevice = async (payload: RegisterTypes) => {
     // Set custom claims for role 'admin'
     await auth.setCustomUserClaims(userRecord.uid, { role: 'admin' });
 
+    if (!userRecord.email) {
+      return {
+        success: false,
+        message: 'Email is required for verification',
+      };
+    }
+
+    // Kirim verificationLink melalui email kepada user menggunakan service pengiriman email
+    const verificationLink = await auth.generateEmailVerificationLink(userRecord.email);
+
     // Store additional admin data in Firestore
     const adminData = {
       uid: userRecord.uid,
@@ -32,7 +42,10 @@ export const registerAdminSevice = async (payload: RegisterTypes) => {
     return {
       success: true,
       message: 'Admin successfully registered',
-      data: adminData,
+      data: {
+        user: adminData,
+        verificationLink,
+      },
     };
   } catch (error) {
     if (error instanceof Error) {
