@@ -1,5 +1,4 @@
 import { auth, db } from '../lib/firebase/init';
-import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 import CONFIG from '../config/environtment';
 import { logError, logInfo } from '../utils/logger';
@@ -20,7 +19,6 @@ export const registerAdminSevice = async (payload: RegisterTypes) => {
 
     // Store additional admin data in Firestore
     const adminData = {
-      id: uuidv4(),
       uid: userRecord.uid,
       email: userRecord.email,
       name: userRecord.displayName,
