@@ -24,13 +24,7 @@ export const addDataAbout = async (payload: AboutType): Promise<ContentResultTyp
       data: { id: aboutRef.id, ...newData },
     };
   } catch (error) {
-    if (error instanceof Error) {
-      return {
-        success: false,
-        message: `Unknown error occurred during adding data content about: ${error.message}`,
-      };
-    }
-    return { success: false, message: 'Unknown error occurred during adding data content about' };
+    throw error;
   }
 };
 
@@ -53,13 +47,7 @@ export const getAllDataAbout = async (): Promise<ContentResultType> => {
       data,
     };
   } catch (error) {
-    if (error instanceof Error) {
-      return {
-        success: false,
-        message: `Unknown error occurred during get all data content about: ${error.message}`,
-      };
-    }
-    return { success: false, message: 'Unknown error occurred during get all data content about' };
+    throw error;
   }
 };
 
@@ -77,13 +65,7 @@ export const getDataAboutById = async (id: string): Promise<ContentResultType> =
       data: { id: snapshot.id, ...snapshot.data() },
     };
   } catch (error) {
-    if (error instanceof Error) {
-      return {
-        success: false,
-        message: `Unknown error occurred during get data content about with ID ${id}: ${error.message}`,
-      };
-    }
-    return { success: false, message: 'Unknown error occurred during get data content about by id' };
+    throw error;
   }
 };
 
@@ -103,13 +85,7 @@ export const deleteDataAboutById = async (id: string): Promise<ContentResultType
       try {
         await deleteImageFromStorage(imageUrl1);
       } catch (error) {
-        if (error instanceof Error) {
-          return {
-            success: false,
-            message: `Failed to delete image for content about with ID ${id}: ${error.message}`,
-          };
-        }
-        return { success: false, message: 'Unknown error occurred during deletion' };
+        throw error;
       }
     } else if (!imageUrl1) {
       return { success: false, message: 'No image link found for ID: ' + id };
@@ -120,13 +96,7 @@ export const deleteDataAboutById = async (id: string): Promise<ContentResultType
       try {
         await deleteImageFromStorage(imageUrl2);
       } catch (error) {
-        if (error instanceof Error) {
-          return {
-            success: false,
-            message: `Failed to delete image for content about with ID ${id}: ${error.message}`,
-          };
-        }
-        return { success: false, message: 'Unknown error occurred during deletion' };
+        throw error;
       }
     } else if (!imageUrl2) {
       return { success: false, message: 'No image link found for ID: ' + id };
@@ -135,13 +105,7 @@ export const deleteDataAboutById = async (id: string): Promise<ContentResultType
     await aboutRef.delete();
     return { success: true, message: `Success delete data content about for ID: ${id}` };
   } catch (error) {
-    if (error instanceof Error) {
-      return {
-        success: false,
-        message: `Unknown error occurred during deletion content about with ID ${id}: ${error.message}`,
-      };
-    }
-    return { success: false, message: 'Unknown error occurred during deletion' };
+    throw error;
   }
 };
 
@@ -162,10 +126,7 @@ export const updateDataAboutById = async (id: string, payload: AboutType): Promi
       try {
         await deleteImageFromStorage(snapshot.data()?.image1);
       } catch (error) {
-        if (error instanceof Error) {
-          return { success: false, message: `Failed to delete image for about with ID ${id}: ${error.message}` };
-        }
-        return { success: false, message: 'Unknown error occurred during deletion' };
+        throw error;
       }
     }
 
@@ -196,12 +157,6 @@ export const updateDataAboutById = async (id: string, payload: AboutType): Promi
       data: { id: snapshot.id, ...updatedData },
     };
   } catch (error) {
-    if (error instanceof Error) {
-      return {
-        success: false,
-        message: `Error occurred during updating content about with ID ${id}: ${error.message}`,
-      };
-    }
-    return { success: false, message: 'Unknown error occurred during updating' };
+    throw error;
   }
 };

@@ -46,14 +46,7 @@ export const addDataMedia = async (payload: MediaType): Promise<ContentResultTyp
       data: { id: mediaRef.id, ...newData },
     };
   } catch (error) {
-    if (error instanceof Error) {
-      return {
-        success: false,
-        message: `Error occurred while add new data media about: ${error.message}`,
-      };
-    } else {
-      return { success: false, message: 'Unknown error occurred while add new data media' };
-    }
+    throw error;
   }
 };
 
@@ -71,13 +64,7 @@ export const getDataMedia = async (): Promise<ContentResultType> => {
       data: { id: snapshot.docs[0].id, ...snapshot.docs[0].data() },
     };
   } catch (error) {
-    if (error instanceof Error) {
-      return {
-        success: false,
-        message: `Unknown error occurred during get data media: ${error.message}`,
-      };
-    }
-    return { success: false, message: 'Unknown error occurred during get data media' };
+    throw error;
   }
 };
 
@@ -96,13 +83,7 @@ export const updateDataMedia = async (payload: MediaType): Promise<ContentResult
       try {
         await deleteImageFromStorage(snapshot.docs[0].data().logo_image);
       } catch (error) {
-        if (error instanceof Error) {
-          return {
-            success: false,
-            message: `Failed to delete image for update data media : ${error.message}`,
-          };
-        }
-        return { success: false, message: 'Unknown error occurred during deletion image for update data media' };
+        throw error;
       }
     }
 
@@ -112,13 +93,7 @@ export const updateDataMedia = async (payload: MediaType): Promise<ContentResult
       try {
         await deleteImageFromStorage(snapshot.docs[0].data().hero_image);
       } catch (error) {
-        if (error instanceof Error) {
-          return {
-            success: false,
-            message: `Failed to delete image for update data media : ${error.message}`,
-          };
-        }
-        return { success: false, message: 'Unknown error occurred during deletion image for update data media' };
+        throw error;
       }
     }
 
@@ -131,13 +106,7 @@ export const updateDataMedia = async (payload: MediaType): Promise<ContentResult
       try {
         await deleteImageFromStorage(snapshot.docs[0].data().background_image);
       } catch (error) {
-        if (error instanceof Error) {
-          return {
-            success: false,
-            message: `Failed to delete image for update data media : ${error.message}`,
-          };
-        }
-        return { success: false, message: 'Unknown error occurred during deletion image for update data media' };
+        throw error;
       }
     }
 
@@ -147,13 +116,7 @@ export const updateDataMedia = async (payload: MediaType): Promise<ContentResult
       try {
         await deleteImageFromStorage(snapshot.docs[0].data().footer_image);
       } catch (error) {
-        if (error instanceof Error) {
-          return {
-            success: false,
-            message: `Failed to delete image for update data media : ${error.message}`,
-          };
-        }
-        return { success: false, message: 'Unknown error occurred during deletion image for update data media' };
+        throw error;
       }
     }
 
@@ -179,12 +142,6 @@ export const updateDataMedia = async (payload: MediaType): Promise<ContentResult
       data: { id: snapshot.docs[0].id, ...updatedData },
     };
   } catch (error) {
-    if (error instanceof Error) {
-      return {
-        success: false,
-        message: `Unknown error occurred during updating data media: ${error.message}`,
-      };
-    }
-    return { success: false, message: 'Unknown error occurred during updating data media' };
+    throw error;
   }
 };
