@@ -130,10 +130,10 @@ export const deletePotong = async (req: Request, res: Response) => {
       logInfo(result.message);
       const response: ResponseDataType = {
         status: true,
-        statusCode: 200,
+        statusCode: 204,
         message: result.message,
       };
-      return res.status(200).send(response);
+      return res.status(204).send(response);
     } else {
       logError(result.message);
       const response: ResponseDataType = { status: false, statusCode: 404, message: result.message };
