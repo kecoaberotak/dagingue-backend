@@ -64,14 +64,7 @@ export const addDataBumbu = async (payload: ProductType): Promise<ProductResultT
       data: { id: bumbuRef.id, ...newData },
     };
   } catch (error) {
-    if (error instanceof Error) {
-      return {
-        success: false,
-        message: `Error occurred while add new data bumbu: ${error.message}`,
-      };
-    } else {
-      return { success: false, message: 'Unknown error occurred while add new data bumbu' };
-    }
+    throw error;
   }
 };
 
@@ -91,10 +84,7 @@ export const deleteDataBumbuById = async (id: string): Promise<ProductResultType
       try {
         await deleteImageFromStorage(imageUrl);
       } catch (error) {
-        if (error instanceof Error) {
-          return { success: false, message: `Failed to delete image for bumbu with ID ${id}: ${error.message}` };
-        }
-        return { success: false, message: 'Unknown error occurred during deletion' };
+        throw error;
       }
     }
 
@@ -102,10 +92,7 @@ export const deleteDataBumbuById = async (id: string): Promise<ProductResultType
     await bumbuRef.delete();
     return { success: true, message: `Success delete data bumbu for ID: ${id}` };
   } catch (error) {
-    if (error instanceof Error) {
-      return { success: false, message: error.message };
-    }
-    return { success: false, message: 'Unknown error occurred during deletion' };
+    throw error;
   }
 };
 
@@ -126,10 +113,7 @@ export const editDataBumbuById = async (id: string, payload: ProductType) => {
       try {
         await deleteImageFromStorage(snapshot.data()?.image);
       } catch (error) {
-        if (error instanceof Error) {
-          return { success: false, message: `Failed to delete image for bumbu with ID ${id}: ${error.message}` };
-        }
-        return { success: false, message: 'Unknown error occurred during deletion' };
+        throw error;
       }
     }
 
