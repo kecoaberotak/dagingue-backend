@@ -71,14 +71,7 @@ export const addDataPotong = async (payload: ProductType): Promise<ProductResult
       data: { id: potongRef.id, ...newData },
     };
   } catch (error) {
-    if (error instanceof Error) {
-      return {
-        success: false,
-        message: `Error occurred while add new data potong: ${error.message}`,
-      };
-    } else {
-      return { success: false, message: 'Unknown error occurred while add new data potong' };
-    }
+    throw error;
   }
 };
 
@@ -101,10 +94,7 @@ export const deleteDataPotongById = async (id: string): Promise<ProductResultTyp
       try {
         await deleteImageFromStorage(imageUrl);
       } catch (error) {
-        if (error instanceof Error) {
-          return { success: false, message: `Failed to delete image for potong with ID ${id}: ${error.message}` };
-        }
-        return { success: false, message: 'Unknown error occurred during deletion' };
+        throw error;
       }
     }
 
@@ -112,10 +102,7 @@ export const deleteDataPotongById = async (id: string): Promise<ProductResultTyp
     await potongRef.delete();
     return { success: true, message: `Success delete data potong for ID: ${id}` };
   } catch (error) {
-    if (error instanceof Error) {
-      return { success: false, message: `Failed to delete image for potong with ID ${id}: ${error.message}` };
-    }
-    return { success: false, message: 'Unknown error occurred during deletion' };
+    throw error;
   }
 };
 
@@ -137,10 +124,7 @@ export const editDataPotongById = async (id: string, payload: ProductType): Prom
       try {
         await deleteImageFromStorage(snapshot.data()?.image);
       } catch (error) {
-        if (error instanceof Error) {
-          return { success: false, message: `Failed to delete image for potong with ID ${id}: ${error.message}` };
-        }
-        return { success: false, message: 'Unknown error occurred during deletion' };
+        throw error;
       }
     }
 
