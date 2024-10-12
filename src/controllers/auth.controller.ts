@@ -40,11 +40,11 @@ export const registerAdmin = async (req: Request, res: Response) => {
       logError(`Error in registerAdminSevice: ${result.message}`);
       const response: ResponseDataType = {
         status: false,
-        statusCode: 422,
+        statusCode: 500,
         message: result.message,
         data: {},
       };
-      return res.status(422).send(response);
+      return res.status(500).send(response);
     }
   } catch (error) {
     if (error instanceof Error) {
@@ -101,11 +101,11 @@ export const login = async (req: Request, res: Response) => {
       logError(`Error in loginController: ${result.message}`);
       const response: ResponseDataType = {
         status: false,
-        statusCode: 422,
+        statusCode: 403,
         message: result.message,
         data: {},
       };
-      return res.status(422).send(response);
+      return res.status(403).send(response);
     }
   } catch (error: any) {
     logError(`Error in loginController: ${error.message}`);
@@ -113,10 +113,10 @@ export const login = async (req: Request, res: Response) => {
     const response: ResponseDataType = {
       status: false,
       message: error.message || 'Failed to login',
-      statusCode: 401,
+      statusCode: 500,
       data: {},
     };
-    return res.status(401).send(response);
+    return res.status(500).send(response);
   }
 };
 
@@ -220,11 +220,10 @@ export const deleteUser = async (req: Request, res: Response) => {
     if (result.success) {
       const response: ResponseDataType = {
         status: true,
-        statusCode: 200,
+        statusCode: 204,
         message: result.message,
-        data: {},
       };
-      return res.status(200).send(response);
+      return res.status(204).send(response);
     }
   } catch (error: any) {
     logError(`Error deleting user: ${error.message}`);
@@ -232,7 +231,6 @@ export const deleteUser = async (req: Request, res: Response) => {
       status: false,
       statusCode: 500,
       message: error.message || 'Failed to delete user',
-      data: {},
     };
     return res.status(500).send(response);
   }
