@@ -3,6 +3,7 @@ import axios from 'axios';
 import CONFIG from '../config/environtment';
 import { logError, logInfo } from '../utils/logger';
 import { LoginTypes, RegisterTypes } from '../types/auth.types';
+import { sendVerificationEmail } from '../utils/emailVerification';
 
 export const registerAdminSevice = async (payload: RegisterTypes) => {
   const { name, email, password } = payload;
@@ -25,7 +26,16 @@ export const registerAdminSevice = async (payload: RegisterTypes) => {
     }
 
     // Kirim verificationLink melalui email kepada user menggunakan service pengiriman email
-    const verificationLink = await auth.generateEmailVerificationLink(userRecord.email);
+    try {
+      const verificationLink = await auth.generateEmailVerificationLink(userRecord.email);
+      await sendVerificationEmail(userRecord.email, verificationLink);
+    } catch (emailError) {
+      logError(`Failed to send verification email to ${userRecord.email}: ${emailError}`);
+      return {
+        success: false,
+        message: 'Failed to send verification email. Please try again.',
+      };
+    }
 
     // Store additional admin data in Firestore
     const adminData = {
@@ -44,7 +54,6 @@ export const registerAdminSevice = async (payload: RegisterTypes) => {
       message: 'Admin successfully registered',
       data: {
         user: adminData,
-        verificationLink,
       },
     };
   } catch (error) {
