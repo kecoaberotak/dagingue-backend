@@ -1,6 +1,6 @@
 import { auth, db } from '../lib/firebase/init';
 import axios from 'axios';
-import CONFIG from '../config/environtment';
+import CONFIG from '../config/environment';
 import { logError, logInfo } from '../utils/logger';
 import { LoginTypes, RegisterTypes } from '../types/auth.types';
 import { sendVerificationEmail } from '../utils/emailVerification';

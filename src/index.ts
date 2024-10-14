@@ -1,6 +1,6 @@
 import express from 'express';
 import { logInfo } from './utils/logger';
-import CONFIG from './config/environtment';
+import CONFIG from './config/environment';
 import createServer from './utils/server';
 
 const app = createServer();
