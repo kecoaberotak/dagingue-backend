@@ -8,19 +8,7 @@
   ],
   "routes": [
     {
-      "src": "/auth/(.*)",
-      "dest": "dist/index.js"
-    },
-    {
-      "src": "/product/(.*)",
-      "dest": "dist/index.js"
-    },
-    {
-      "src": "/content/(.*)",
-      "dest": "dist/index.js"
-    },
-    {
-      "src": "/health/(.*)",
+      "src": "/(.*)",
       "dest": "dist/index.js"
     }
   ]
