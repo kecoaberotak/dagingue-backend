@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import express from 'express';
 import { logInfo } from './utils/logger';
 import CONFIG from './config/environment';
@@ -9,10 +8,10 @@ const port = CONFIG.port;
 
 app.use(express.json());
 
-console.log(process.env.NODE_ENV, 'NODE_ENV');
+logInfo(`Server is running in ${CONFIG.node_env} environment`);
 
 // Hanya gunakan app.listen() jika dijalankan secara lokal
-if (process.env.NODE_ENV !== 'production') {
+if (CONFIG.node_env !== 'production') {
   app.listen(port, () => {
     logInfo(`[server]: Server is running at port: ${port}`);
   });
